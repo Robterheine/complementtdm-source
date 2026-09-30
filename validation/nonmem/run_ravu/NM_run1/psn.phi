@@ -1,0 +1,6 @@
+TABLE NO.     1: Laplacian Conditional Estimation (Evaluation): Problem=1 Subproblem=0 Superproblem1=0 Iteration1=0 Superproblem2=0 Iteration2=0
+ SUBJECT_NO   ID           ETA(1)       ETA(2)       ETC(1,1)     ETC(2,1)     ETC(2,2)     OBJ
+            1            1  3.56033E-01  1.68808E-01  4.22047E-03  1.90038E-03  1.10698E-02    56.342728241082000
+            2            2 -6.74989E-02 -1.25622E-02  5.92155E-03  2.99757E-03  2.23762E-02    31.273202917990243
+            3            3 -2.80182E-01 -1.05554E-01  1.00513E-02  1.60267E-03  2.03777E-02    69.698055950251046
+            4            4  3.34506E-02  9.97373E-03  1.85915E-02  4.54949E-03  2.30517E-02    9.9530027213338563

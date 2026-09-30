@@ -1,0 +1,586 @@
+/* mAb TDM app styles */
+:root {
+  --bg: #eef2f6;
+  --card: #ffffff;
+  --ink: #0f172a;
+  --muted: #64748b;
+  --line: #e2e8f0;
+  --accent: #0e7490;
+  --accent-dark: #155e75;
+  --ok: #16a34a;
+  --warn: #d97706;
+  --bad: #dc2626;
+  --radius: 10px;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+header.app {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 18px;
+  background: linear-gradient(90deg, #0c4a6e, #0e7490);
+  color: #f0f9ff;
+  flex-wrap: wrap;
+}
+header.app h1 { font-size: 17px; margin: 0; font-weight: 650; letter-spacing: .2px; }
+header.app h1 .appver { font-size: 11.5px; font-weight: 400; color: #bae6fd; margin-left: 5px; }
+header.app .sub { font-size: 12px; color: #bae6fd; }
+header.app .actions { display: flex; gap: 8px; }
+
+main.layout {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px 18px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+/* v0.11.0 — numbered workflow sections: 1 drug+patient, 2 data, 3 results */
+.stepnum {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 19px; height: 19px; border-radius: 999px;
+  background: var(--accent); color: #fff;
+  font-size: 11.5px; font-weight: 700; margin-right: 7px;
+  vertical-align: 1px;
+}
+.card h2.sub-h { margin-top: 16px; }
+
+/* session bar: the drug + key patient fields in one compact row */
+.sess-row {
+  display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;
+}
+.sess-field { flex: 1 1 128px; min-width: 118px; }
+.sess-field.sess-drug { flex: 1.4 1 170px; }
+.sess-field label.f, .sess-field .lbl-help { margin-top: 0; }
+.sess-hint {
+  flex: 1.6 1 200px; font-size: 11.5px; color: var(--muted);
+  padding-bottom: 7px; min-height: 30px;
+}
+#drugHint { font-size: 11.5px; color: var(--muted); }
+#morePatient { margin-top: 10px; }
+#morePatient summary { font-weight: 500; }
+
+/* v0.12.0 — folded trough target: the active value stays readable in the
+   summary; changing it requires an explicit open (prevents accidental edits) */
+details.sess-fold {
+  border: 1px solid var(--line); border-radius: 8px; background: #f8fafc;
+  padding: 4px 10px;
+}
+details.sess-fold > summary {
+  cursor: pointer; font-size: 12.5px; font-weight: 650; color: #334155;
+  display: flex; align-items: center; gap: 7px; list-style: none; padding: 2px 0;
+}
+details.sess-fold > summary::-webkit-details-marker { display: none; }
+details.sess-fold > summary::before { content: '\25B8'; color: var(--muted); font-size: 11px; }
+details.sess-fold[open] > summary::before { content: '\25BE'; }
+details.sess-fold .fold-lbl { color: var(--muted); font-weight: 600; }
+details.sess-fold .fold-val { font-variant-numeric: tabular-nums; }
+details.sess-fold .fold-edit { margin-left: auto; font-size: 11px; color: var(--accent); font-weight: 500; }
+details.sess-fold[open] .fold-edit { visibility: hidden; }
+details.sess-fold[open] { padding-bottom: 10px; }
+
+/* v0.12.0 — log-scale toggle above the forecast chart */
+.chart-head { display: flex; justify-content: flex-end; margin: 0 0 2px; }
+.chart-log { margin: 0; font-size: 12px; color: var(--muted); }
+.chart-log input { cursor: pointer; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .05);
+  padding: 14px;
+}
+.card h2 {
+  font-size: 12.5px; text-transform: uppercase; letter-spacing: .8px;
+  color: var(--muted); margin: 0 0 10px;
+}
+.card h2 .hint { text-transform: none; letter-spacing: 0; font-weight: 400; }
+
+/* forms */
+label.f { display: block; margin: 8px 0 3px; font-size: 12.5px; color: #334155; font-weight: 600; }
+input[type="text"], input[type="number"], input[type="datetime-local"], input[type="date"], select {
+  width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 7px;
+  font-size: 13.5px; background: #fff; color: var(--ink);
+}
+input:focus, select:focus { outline: 2px solid #67e8f9; border-color: var(--accent); }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.check { display: flex; align-items: center; gap: 7px; margin-top: 8px; font-size: 13px; color: #334155; }
+.check input { width: auto; }
+
+button {
+  font: inherit; cursor: pointer; border-radius: 7px; border: 1px solid transparent;
+  padding: 7px 12px; background: #f1f5f9; color: var(--ink); font-weight: 600;
+}
+button:hover { background: #e2e8f0; }
+button.primary { background: var(--accent); color: #fff; }
+button.primary:hover { background: var(--accent-dark); }
+button.small { padding: 3px 9px; font-size: 12px; font-weight: 500; }
+button.linklike { background: none; border: none; color: var(--accent); text-decoration: underline; padding: 0; font-weight: 500; }
+button:disabled { opacity: .5; cursor: default; }
+/* A disabled advanced-fitting select must read as deliberately unavailable
+   rather than broken; the hint line beside it says why (v0.20.0). */
+select:disabled { opacity: .55; cursor: not-allowed; background: #f1f5f9; }
+.actions-inline { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+/* tables */
+table.data { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.data th {
+  text-align: left; font-size: 11.5px; text-transform: uppercase; letter-spacing: .4px;
+  color: var(--muted); padding: 5px 7px; border-bottom: 1.5px solid var(--line);
+}
+table.data td { padding: 5px 7px; border-bottom: 1px solid #f1f5f9; }
+table.data tr.past td { color: #94a3b8; }
+table.data td.num, table.data th.num { text-align: right; }
+.tbl-wrap { overflow-x: auto; }
+
+.badge {
+  display: inline-block; padding: 1.5px 8px; border-radius: 999px;
+  font-size: 11.5px; font-weight: 600;
+}
+.badge.ok { background: #dcfce7; color: #166534; }
+
+/* v0.10.0 — fit diagnostics (GOF + EBE forest) */
+.diag-open { font-size: 13px; padding: 5px 0; display: inline-block; }
+.diag-hint { font-weight: 600; }
+.diag-hint.ok { color: #15803d; }
+.diag-hint.warn { color: #b45309; }
+.diag-hint.bad { color: #b91c1c; }
+.diag-h { margin: 10px 0 6px; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); }
+.diag-chart { border: 1px solid var(--line); border-radius: var(--radius); padding: 6px; background: #fbfdfe; }
+.diag-res { margin-top: 10px; }
+.res-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #cbd5e1; margin-right: 6px; vertical-align: baseline; }
+.res-dot.ok { background: #16a34a; }
+.res-dot.warn { background: #d97706; }
+.res-dot.bad { background: #dc2626; }
+.res-row.hl { background: #ecfeff; }
+.sk-bad { color: #b91c1c; }
+.legend-note .sk-ok { color: #15803d; }
+.legend-note .sk-warn { color: #b45309; }
+.legend-note .sk-bad { color: #b91c1c; }
+/* EBE forest rows */
+.ebe-rows { padding: 4px 0; }
+.ebe-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; }
+.ebe-name { flex: 0 0 88px; font-size: 12.5px; color: var(--ink); font-weight: 600; }
+.ebe-track { flex: 1 1 auto; position: relative; height: 16px; background: #f1f5f9; border-radius: 4px; }
+.ebe-zero { position: absolute; left: 50%; top: -2px; bottom: -2px; width: 2px; margin-left: -1px; background: #94a3b8; border-radius: 1px; }
+.ebe-bar { position: absolute; top: 4px; height: 8px; border-radius: 4px; }
+.ebe-bar.ok { background: #86efac; }
+.ebe-bar.warn { background: #fcd34d; }
+.ebe-bar.bad { background: #fca5a5; }
+.ebe-med { position: absolute; top: 1px; bottom: 1px; width: 3px; margin-left: -1.5px; border-radius: 1.5px; }
+.ebe-med.ok { background: #15803d; }
+.ebe-med.warn { background: #b45309; }
+.ebe-med.bad { background: #b91c1c; }
+.ebe-val { flex: 0 0 150px; font-size: 12px; font-weight: 650; font-variant-numeric: tabular-nums; text-align: right; }
+.ebe-val i { font-style: normal; font-weight: 400; color: #94a3b8; }
+.ebe-val.ok { color: #15803d; }
+.ebe-val.warn { color: #b45309; }
+.ebe-val.bad { color: #b91c1c; }
+
+/* v0.9.2 — shrinkage visual: compact per-eta informativeness bars */
+.shrink-bars { margin: 6px 0 2px; padding: 8px 10px 7px; background: #f8fafc;
+  border: 1px solid var(--line); border-radius: var(--radius); }
+.shrink-row { display: flex; align-items: center; gap: 8px; padding: 1.5px 0; }
+.shrink-name { flex: 0 0 74px; font-size: 11.5px; color: var(--muted);
+  font-variant-numeric: tabular-nums; }
+.shrink-track { flex: 1 1 auto; height: 7px; background: #e2e8f0;
+  border-radius: 4px; overflow: hidden; }
+.shrink-fill { display: block; height: 100%; border-radius: 4px; }
+.shrink-fill.ok { background: #16a34a; }
+.shrink-fill.warn { background: #d97706; }
+.shrink-fill.weak { background: #cbd5e1; }
+.shrink-pct { flex: 0 0 40px; text-align: right; font-size: 11px;
+  font-weight: 650; font-variant-numeric: tabular-nums; }
+.shrink-pct.ok { color: #15803d; }
+.shrink-pct.warn { color: #b45309; }
+.shrink-pct.weak { color: #94a3b8; }
+.shrink-key { margin-top: 5px; font-size: 10.5px; color: #94a3b8; }
+.shrink-key .sk-ok { color: #15803d; }
+.shrink-key .sk-warn { color: #b45309; }
+.shrink-key .sk-weak { color: #94a3b8; }
+
+.badge.warn { background: #fef3c7; color: #92400e; }
+.badge.bad { background: #fee2e2; color: #991b1b; }
+.badge.info { background: #e0f2fe; color: #075985; }
+
+.note {
+  background: #f8fafc; border: 1px solid var(--line); border-left: 3px solid var(--accent);
+  border-radius: 8px; padding: 8px 11px; font-size: 12.5px; color: #334155; margin-top: 10px;
+}
+.note.warn { border-left-color: var(--warn); background: #fffbeb; }
+.note.bad { border-left-color: var(--bad); background: #fef2f2; }
+
+#chartBox { position: relative; }
+.legend-note { font-size: 11.5px; color: var(--muted); margin-top: 4px; }
+
+.progress-wrap { margin: 10px 0 2px; display: none; }
+.progress-wrap .bar { height: 7px; border-radius: 4px; background: #e2e8f0; overflow: hidden; }
+.progress-wrap .bar > div { height: 100%; width: 0; background: var(--accent); transition: width .15s; }
+.progress-wrap .msg { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+.unit { text-transform: none; }   /* uppercase headers turned µg/mL into ΜG/ML */
+.plan-block { margin-top: 12px; padding-top: 8px; border-top: 1px dashed var(--line); }
+.plan-block .plan-title { font-size: 12.5px; color: #334155; font-weight: 600; }
+.stale-banner {
+  display: none; margin: 0 0 10px; padding: 7px 11px; border-radius: 8px;
+  background: #fef3c7; color: #92400e; font-size: 12.5px; font-weight: 600;
+}
+
+.seg {
+  display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0 4px;
+  background: #f1f5f9; border: 1px solid var(--line); border-radius: 9px; padding: 4px;
+}
+.seg-opt {
+  flex: 1; display: flex; align-items: center; gap: 7px; justify-content: center;
+  padding: 7px 10px; border-radius: 7px; cursor: pointer; font-size: 13px;
+  color: #334155; background: transparent; user-select: none;
+}
+.seg-opt:has(input:checked) { background: #fff; box-shadow: 0 1px 2px rgba(15,23,42,.12); font-weight: 650; }
+.seg-opt input { margin: 0; }
+
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; font-size: 13px; }
+.kv .k { color: var(--muted); }
+.kv .v { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+
+.result-meta { font-size: 12px; color: var(--muted); margin: 2px 0 10px; }
+
+/* footer: short identity line on screen; full disclaimer prints with the report */
+footer.app { padding: 4px 18px 14px; max-width: 1180px; margin: 0 auto; font-size: 11.5px; color: var(--muted); }
+footer.app .disclaimer {
+  background: #f8fafc; border: 1px solid var(--line); border-radius: 8px;
+  padding: 8px 12px; margin-bottom: 8px;
+}
+footer.app .credit { font-size: 12.5px; color: #334155; margin-bottom: 8px; }
+footer.app .credit a { color: #0e7490; text-decoration: none; }
+footer.app .credit a:hover { text-decoration: underline; }
+
+.advisory { margin-top: 6px; font-size: 12.5px; }
+
+/* About modal */
+[hidden] { display: none !important; }
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(15, 23, 42, .45);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.modal {
+  background: #fff; border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, .22);
+  max-width: 640px; max-height: 82vh; overflow-y: auto;
+  padding: 16px 20px; position: relative;
+}
+.modal.modal-wide { max-width: 700px; }
+.modal h2 { margin: 0 0 10px; font-size: 16px; color: var(--ink); }
+.modal h3 { margin: 14px 0 4px; font-size: 12.5px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); }
+.modal p { font-size: 12.5px; color: #334155; margin: 6px 0; line-height: 1.5; }
+.modal .src { font-size: 11.8px; color: var(--muted); }
+.modal .src a { color: #0e7490; word-break: break-all; }
+.modal .src a:hover { text-decoration: underline; }
+.modal .about-model {
+  border: 1px solid var(--line); border-radius: 8px;
+  padding: 8px 12px; margin: 8px 0;
+}
+.modal .about-model b { color: var(--ink); }
+.modal .about-photo {
+  display: flex; align-items: center; gap: 10px;
+  margin: 14px 0 2px; padding-top: 10px; border-top: 1px solid var(--line);
+}
+.modal .about-photo img { width: 56px; height: 56px; border-radius: 50%; flex: 0 0 auto; }
+.modal .about-photo span { font-size: 11.8px; color: var(--muted); line-height: 1.4; }
+.modal-close {
+  position: absolute; top: 8px; right: 10px;
+  background: none; border: none; font-size: 20px; line-height: 1;
+  color: var(--muted); cursor: pointer; padding: 0 6px;
+}
+.modal-close:hover { color: var(--ink); }
+
+/* prevent grid blow-out on narrow screens */
+main.layout, main.layout > .card, table.data, input, select, .actions-inline, .row2 > div, .row3 > div { min-width: 0; }
+
+details.help { margin: 8px 0; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 6px 11px; }
+details.help summary { cursor: pointer; font-size: 12.5px; font-weight: 650; color: #0c4a6e; }
+details.help ul { margin: 7px 0 4px 18px; padding: 0; font-size: 12.5px; color: #334155; }
+details.help li { margin: 4px 0; }
+
+/* ---- novice usability (v0.8.0) ------------------------------------------ */
+
+/* P1: four-step guide under the header */
+.stepper {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 7px 18px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px;
+  font-size: 12.5px; color: #78350f;
+}
+.stepper.hidden { display: none; }
+.stepper .step { display: flex; align-items: center; gap: 6px; opacity: .55; }
+.stepper .step i {
+  font-style: normal; width: 17px; height: 17px; border-radius: 999px;
+  background: #f3f4f6; color: #78350f; border: 1px solid #fcd34d;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 10.5px; font-weight: 700;
+}
+.stepper .step.active { opacity: 1; font-weight: 650; }
+.stepper .step.active i { background: #0e7490; border-color: #0e7490; color: #fff; }
+.stepper .step.done { opacity: 1; }
+.stepper .step.done i { background: #16a34a; border-color: #16a34a; color: #fff; }
+.stepper .step.done { text-decoration: line-through; text-decoration-color: #a8a29e; }
+.stepper .linklike { margin-left: auto; color: #92400e; font-size: 12px; }
+
+/* P1/P5: run hint under the Run button (reason while not ready, expectation
+   line once ready) */
+.run-hint { display: none; font-size: 12px; color: var(--muted); margin-top: 6px; }
+.run-hint.show { display: block; }
+.run-hint.show:not(.ready) { color: #92400e; font-weight: 600; }
+
+/* P2: ⓘ help buttons + shared popover (tap/click/keyboard; native titles
+   remain for mouse hover) */
+button.info {
+  width: 16px; height: 16px; padding: 0; margin: 0 0 0 2px;
+  border: 1px solid #7dd3fc; border-radius: 999px; background: #f0f9ff;
+  color: #0369a1; font-size: 10px; line-height: 1; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+  vertical-align: middle;
+}
+button.info:hover { background: #e0f2fe; }
+button.info:focus-visible { outline: 2px solid #0369a1; outline-offset: 1px; }
+
+/* P2: label + ⓘ pairs (the button must NOT sit inside the label — clicking
+   the label text focuses the input, the ⓘ is a sibling control) */
+.lbl-help { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.lbl-help label.f { margin-right: auto; }
+#helpPop {
+  position: absolute; z-index: 120; display: none;
+  max-width: 260px; padding: 8px 11px; border-radius: 8px;
+  background: #0f172a; color: #f1f5f9; font-size: 12px; line-height: 1.45;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, .3);
+}
+#helpPop.show { display: block; }
+
+/* P4: undo toast (replaces the native confirm() dialog) */
+.toast {
+  position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%) translateY(8px);
+  z-index: 130; display: none;
+  background: #0f172a; color: #f1f5f9; padding: 9px 14px; border-radius: 9px;
+  font-size: 12.5px; box-shadow: 0 8px 22px rgba(15, 23, 42, .35);
+  opacity: 0; transition: opacity .18s, transform .18s;
+}
+.toast.show { display: block; opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast .linklike { color: #7dd3fc; margin-left: 8px; }
+
+/* P-badge is click-tappable too (opens the probability popover) */
+.badge[data-help] { cursor: help; }
+
+/* =========================================================================
+ * RESPONSIVE (v0.17.0) — two tiers, consolidated to one block each. Plain
+ * CSS custom properties can't be read inside an @media condition and this
+ * project has no build-time constant substitution (build.mjs just
+ * concatenates files), so "one number, many places" means one documented
+ * pair of literal breakpoints instead of a variable:
+ *
+ *   700px "compact"  — light touch. Currently: form rows that pair a date
+ *                       with a number stack instead of forcing two columns
+ *                       that would otherwise get uncomfortably narrow.
+ *   560px "phone"     — where the real restructuring happens: two-column
+ *                       grids collapse to one, row-wise comparison tables
+ *                       (trough table, regimen explorer) become stacked
+ *                       cards instead of scrolling sideways, the header's
+ *                       four action buttons become a 2x2 grid instead of an
+ *                       unpredictable wrap, and a few controls under a
+ *                       comfortable touch-target size get more tap area.
+ *                       (The SVG charts are handled separately, in
+ *                       src/chart.js + src/ui.js — they measure their own
+ *                       container's pixel width at render time rather than
+ *                       reading this breakpoint, since a chart's actual
+ *                       available width is its card's width minus padding,
+ *                       not the raw viewport width a CSS media query sees.)
+ * ========================================================================= */
+@media (max-width: 700px) {
+  .sess-row { flex-direction: column; align-items: stretch; }
+  /* v0.46.0: in a column the flex-basis (128px / 170px) becomes a HEIGHT -- the 32px
+   * trough-target fold sat in a 128px box, ~400px of blank space on a phone. */
+  .sess-field, .sess-field.sess-drug { flex: 0 0 auto; }
+  .sess-hint { padding-bottom: 0; min-height: 0; }
+  .iv-controls input[type="number"] { width: 84px; }
+}
+
+@media (max-width: 560px) {
+  .row2, .row3 { grid-template-columns: 1fr; }
+  header.app, main.layout { padding-left: 10px; padding-right: 10px; }
+  .stepper { gap: 10px; padding: 6px 10px; }
+
+  /* Header: keep all four actions (About/Print/Export/Import) rather than
+   * collapsing to a menu — this is a clinical tool used a handful of times
+   * per session, and hiding "Print report" behind a hamburger tap, or
+   * risking a mistapped icon on export/import of patient data, costs more
+   * than a two-row button grid does. */
+  header.app .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
+  header.app .actions button { width: 100%; }
+  header.app h1 .appver { display: none; }
+
+  /* Row-wise comparison tables (trough table, regimen explorer): scrolling
+   * sideways to see a probability next to the dose it belongs to is worse
+   * than restyling to a card per row. The <table>/<tr>/<td> markup is
+   * unchanged (print, and any table without this class, is unaffected) —
+   * only the display type changes, driven by the data-label attribute
+   * already written onto each <td> at render time. */
+  table.data.responsive-cards thead { display: none; }
+  table.data.responsive-cards tbody tr {
+    display: block; border: 1px solid var(--line); border-radius: 8px;
+    padding: 8px 10px; margin-bottom: 8px;
+  }
+  table.data.responsive-cards tbody tr.iv-current { border-color: #b45309; }
+  table.data.responsive-cards tbody td {
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: 10px; padding: 4px 0; border-bottom: 1px solid #f1f5f9; text-align: right;
+  }
+  table.data.responsive-cards tbody td:last-child { border-bottom: none; }
+  table.data.responsive-cards tbody td::before {
+    content: attr(data-label); font-weight: 600; color: #475569;
+    text-align: left; flex-shrink: 0;
+  }
+
+  /* Touch targets measured under a comfortable tap size: padding added
+   * (not a visual resize) so the ⓘ popover buttons, modal close button and
+   * the stepper's "dismiss" link are easier to hit without a mouse. */
+  /* button.info is a fixed 16x16px box with box-sizing:border-box, so
+   * padding alone shrinks its glyph rather than growing the tap target —
+   * the dimensions themselves need to grow. */
+  button.info { width: 30px; height: 30px; font-size: 13px; margin: -7px 0 -7px 2px; }
+  .modal-close { padding: 10px 14px; top: 2px; right: 2px; }
+  .stepper .linklike { padding: 6px 4px; }
+}
+
+/* print: the app UI is replaced by the generated report sheet
+   (#reportSheet plus the print-only disclaimer footer) */
+@media print {
+  body { background: #fff; font-size: 12px; }
+  .modal-backdrop { display: none !important; }
+  header.app, main.layout, form.inline, button { display: none !important; }
+  /* ephemeral UI layers live outside header/main — hide them explicitly */
+  #stepper, #helpPop, .toast, .run-hint { display: none !important; }
+  #reportSheet { display: block !important; }
+  #reportSheet .rp-chart svg { max-width: 100%; height: auto; }
+  .rp-table, .rp-kv { break-inside: avoid; }
+  .shrink-bars { background: #fff; border: 1px solid #e2e8f0; break-inside: avoid; }
+  .shrink-fill.ok { background: #15803d; }
+  .shrink-fill.warn { background: #b45309; }
+  .rp-shrink-h { font-size: 10.5px; color: #64748b; margin-bottom: 4px; }
+  .rp-shrink .shrink-track { background: #f1f5f9; }
+  /* v0.10.0 diagnostics print rules */
+  .rp-diag { break-inside: avoid; }
+  .rp-diag .diag-chart { border: 1px solid #e2e8f0; background: #fff; }
+  .rp-diag .res-row.hl { background: transparent; }
+  .rp-diag .ebe-track { background: #f1f5f9; }
+  .rp-diag .diag-h { color: #64748b; }
+  footer.app { display: block; font-size: 10px; padding: 4px 8px; }
+  footer.app .disclaimer { margin-bottom: 8px; }
+}
+
+/* report sheet (hidden on screen; printed via the rules above) */
+#reportSheet { display: none; padding: 8px 4px; color: #0f172a; font-size: 12px; }
+#reportSheet[hidden] { display: none !important; }
+#reportSheet .rp-head { border-bottom: 2px solid #0e7490; padding-bottom: 6px; margin-bottom: 10px; }
+#reportSheet .rp-title { font-size: 16px; font-weight: 700; color: #0f172a; }
+#reportSheet .rp-sub { font-size: 10.5px; color: #64748b; margin-top: 2px; }
+#reportSheet .rp-h { font-size: 11px; text-transform: uppercase; letter-spacing: .6px; color: #64748b; margin: 12px 0 4px; }
+#reportSheet table { border-collapse: collapse; width: 100%; }
+#reportSheet .rp-table th, #reportSheet .rp-table td,
+#reportSheet .rp-kv td { border: 1px solid #e2e8f0; padding: 3px 7px; text-align: left; vertical-align: top; }
+#reportSheet .rp-table th { background: #f1f5f9; font-weight: 650; }
+#reportSheet .rp-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+#reportSheet .rp-kv td:first-child { width: 34%; color: #64748b; }
+#reportSheet .rp-note { font-size: 11px; color: #475569; margin: 4px 0; }
+#reportSheet .rp-legend { font-size: 10.5px; color: #64748b; margin: 3px 0 6px; }
+#reportSheet .rp-chart { border: 1px solid #e2e8f0; border-radius: 6px; padding: 4px; break-inside: avoid; }
+#reportSheet .rp-findings { margin: 4px 0 8px 18px; padding: 0; }
+#reportSheet .rp-findings li { margin: 3px 0; }
+#reportSheet .rp-advice {
+  border: 1.5px solid #0e7490; border-radius: 8px; background: #f0f9ff;
+  padding: 8px 12px; min-height: 34px; white-space: normal; break-inside: avoid;
+}
+#reportSheet .rp-sign { margin-top: 14px; width: 100%; }
+#reportSheet .rp-sign td { width: 50%; padding: 0 14px 0 0; vertical-align: bottom; border: none; }
+#reportSheet .rp-sig-role { font-size: 10.5px; text-transform: uppercase; letter-spacing: .5px; color: #64748b; }
+#reportSheet .rp-sig-name { font-size: 12.5px; font-weight: 650; min-height: 16px; }
+#reportSheet .rp-sig-line { border-bottom: 1px solid #0f172a; height: 34px; }
+#reportSheet .rp-sig-cap { font-size: 10px; color: #64748b; margin-top: 2px; }
+
+
+/* ======================================================================
+ * v0.13.0 — accessibility, autosave recovery, excluded samples, assumed
+ * troughs, and print fidelity for the diagnostics graphics.
+ * ====================================================================== */
+
+/* The 5-95% interval used to be #94a3b8 on white = 2.56:1, failing WCAG AA,
+ * next to a full-contrast median — the typography said the median was the
+ * answer and the uncertainty a footnote. #475569 is 7.4:1. */
+.ci-range { color: #475569; font-weight: 400; }
+.empty-cell { color: #475569; padding: 8px 4px; }
+table.data tr.past td { color: #52606d; }
+.shrink-pct.weak, .shrink-key, .shrink-key .sk-weak { color: #52606d; }
+.ebe-val i { color: #52606d; }
+
+/* Samples kept on record but excluded from the likelihood */
+table.data tr.obs-ex td { opacity: .62; }
+table.data tr.obs-ex td b { text-decoration: line-through; }
+.obs-note {
+  width: 100%; font-size: 12px; padding: 3px 6px;
+  border: 1px solid #cbd5e1; border-radius: 4px; background: #fffdf5;
+}
+
+/* A trough the app projected rather than one the clinician scheduled */
+.tag-assumed {
+  display: inline-block; font-size: 10px; letter-spacing: .04em;
+  text-transform: uppercase; padding: 1px 5px; margin-left: 4px;
+  border: 1px solid #b45309; color: #b45309; border-radius: 3px; white-space: nowrap;
+}
+table.data tr.assumed td { background: #fffbeb; }
+.rp-assumed td { background: #fffbeb !important; }
+.rp-src { font-size: 10.5px; color: #52606d; }
+
+/* Autosave recovery bar */
+.restore-bar {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+  padding: 9px 14px;
+  border: 1px solid #f59e0b; background: #fffbeb; border-radius: 6px; font-size: 13px;
+}
+.restore-bar .restore-actions { margin-left: auto; display: flex; gap: 8px; }
+
+@media print {
+  /* The shrinkage tracks, EBE bars and residual dots are CSS background
+   * colours, so a default print (background graphics off) rendered them blank
+   * — while README promised they appear in the report. */
+  .shrink-fill, .shrink-track, .ebe-bar, .ebe-med, .ebe-zero, .res-dot,
+  .rp-assumed td, .badge, .iv-table tr.iv-current td {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .restore-bar { display: none !important; }
+  .iv-table { break-inside: avoid; }
+}
+
+/* ---- regimen explorer (v0.13.0 / v0.14.0) ---- */
+.iv-controls {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 10px;
+}
+.iv-controls label.f { margin: 0; }
+.iv-controls input[type="number"] { width: 110px; }
+.iv-controls select { padding: 5px 8px; }
+.iv-chart { margin: 6px 0 12px; }
+.iv-table { margin-top: 6px; }
+.iv-table tr.iv-current td { background: #fffbeb; }
+.tag-current {
+  display: inline-block; font-size: 10px; letter-spacing: .04em; text-transform: uppercase;
+  padding: 1px 5px; margin-left: 4px; border: 1px solid #b45309; color: #b45309;
+  border-radius: 3px; white-space: nowrap;
+}

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Estimation-Engine Validation Report: complementtdm</title>
+<style>
+  :root {
+    --ink: #1e293b;
+    --ink-soft: #475569;
+    --ink-faint: #64748b;
+    --paper: #fdfdfb;
+    --paper-tint: #f4f7f8;
+    --line: #dbe4ea;
+    --accent: #0e7490;
+    --accent-soft: #e0f2f4;
+    --accent-deep: #0a5568;
+    --good: #15803d;
+    --good-bg: #ecfdf3;
+    --warn: #b45309;
+    --focus-bg: #fff9ec;
+    --focus-line: #f0c869;
+    --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); }
+  body { font-family: var(--serif); font-size: 10.7pt; line-height: 1.55; }
+  @page { size: A4; margin: 20mm 18mm 20mm 18mm; }
+
+  h1, h2, h3, h4 { font-family: var(--serif); color: var(--ink); font-weight: 700; text-wrap: balance; }
+  p { margin: 0 0 0.85em 0; }
+  a { color: var(--accent-deep); }
+  code { font-family: var(--mono); font-size: 0.92em; background: var(--paper-tint); padding: 0.05em 0.32em; border-radius: 3px; }
+
+  /* ---------------------------------------------------------- cover page */
+  .cover { min-height: 250mm; display: flex; flex-direction: column; justify-content: center; page-break-after: always; }
+  .cover .kicker { font-family: var(--sans); text-transform: uppercase; letter-spacing: 0.12em; font-size: 9.5pt; color: var(--accent); font-weight: 600; margin-bottom: 14px; }
+  .cover h1 { font-size: 30pt; line-height: 1.18; margin: 0 0 10px 0; }
+  .cover .subtitle { font-size: 13.5pt; color: var(--ink-soft); font-style: italic; margin-bottom: 42px; max-width: 90%; }
+  .cover .meta-grid { font-family: var(--sans); font-size: 9.8pt; color: var(--ink-soft); border-top: 1px solid var(--line); padding-top: 18px; display: grid; grid-template-columns: 130px 1fr; row-gap: 7px; max-width: 480px; }
+  .cover .meta-grid dt { font-weight: 600; color: var(--ink); }
+  .cover .meta-grid dd { margin: 0; }
+  .cover .verdict-strip { margin-top: 46px; background: var(--good-bg); border-left: 4px solid var(--good); padding: 16px 20px; font-family: var(--sans); font-size: 10.3pt; color: #14532d; max-width: 480px; }
+  .cover .verdict-strip b { display:block; font-size: 11.5pt; margin-bottom: 4px; }
+
+  /* ---------------------------------------------------------- sections */
+  section { page-break-before: always; }
+  section.no-break-before { page-break-before: auto; }
+  h2 { font-size: 17pt; border-bottom: 2px solid var(--accent); padding-bottom: 7px; margin: 0 0 16px 0; }
+  h2 .num { color: var(--accent); }
+  h3 { font-size: 12.7pt; margin: 26px 0 10px 0; color: var(--accent-deep); }
+  h4 { font-size: 11pt; margin: 18px 0 6px 0; }
+
+  /* ------------------------------------------------------- plain-language box */
+  .plain {
+    font-family: var(--sans); font-size: 9.9pt; line-height: 1.5;
+    background: var(--accent-soft); border-left: 4px solid var(--accent);
+    padding: 13px 17px; margin: 4px 0 20px 0; border-radius: 0 4px 4px 0;
+  }
+  .plain .plain-label { font-weight: 700; color: var(--accent-deep); text-transform: uppercase; font-size: 8.3pt; letter-spacing: 0.07em; margin-bottom: 5px; display:block; }
+  .plain p:last-child { margin-bottom: 0; }
+
+  .callout { font-family: var(--sans); font-size: 9.6pt; background: var(--paper-tint); border: 1px solid var(--line); border-radius: 4px; padding: 11px 15px; margin: 14px 0; }
+  .callout.focus { background: var(--focus-bg); border-color: var(--focus-line); }
+
+  /* -------------------------------------------------------------- tables */
+  table.tbl { width: 100%; border-collapse: collapse; font-family: var(--sans); font-size: 8.6pt; margin: 10px 0 18px 0; }
+  table.tbl caption { caption-side: top; text-align: left; font-family: var(--serif); font-style: italic; color: var(--ink-soft); font-size: 9.2pt; margin-bottom: 6px; }
+  table.tbl th { background: var(--paper-tint); text-align: left; font-weight: 700; padding: 6px 8px; border-bottom: 1.5px solid var(--ink-soft); font-size: 8.2pt; vertical-align: bottom; }
+  table.tbl td { padding: 5px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.tbl tr { page-break-inside: avoid; }
+  table.tbl thead { display: table-header-group; }
+  table.tbl .num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--mono); }
+  table.tbl .sub-th { font-weight: 400; font-style: italic; text-transform: none; letter-spacing: 0; }
+  table.tbl .dim { color: var(--ink-faint); }
+  table.tbl tr:last-child td { border-bottom: none; }
+  .pass-badge { display: inline-block; background: var(--good-bg); color: var(--good); font-weight: 700; font-size: 7.8pt; text-transform: uppercase; letter-spacing: 0.04em; padding: 2px 8px; border-radius: 10px; }
+  .pass-badge.small { font-size: 7.2pt; padding: 1px 6px; }
+  .tag { font-size: 7.6pt; background: #eef2f6; color: var(--ink-soft); padding: 1px 6px; border-radius: 8px; margin-left: 3px; }
+  .risk-tbl .risk-id { font-family: var(--mono); font-weight: 700; color: var(--accent-deep); }
+  .risk-tbl tr.focus-row { background: var(--focus-bg); }
+  .risk-tbl td, .risk-tbl th { font-size: 8.1pt; }
+  .grp-title { font-family: var(--sans); font-weight: 700; font-size: 9.6pt; color: var(--accent-deep); margin: 18px 0 4px 0; }
+  .detail-tbl td, .detail-tbl th { font-size: 7.7pt; padding: 4px 6px; }
+
+  /* -------------------------------------------------------------- figures */
+  figure { margin: 18px 0; text-align: center; page-break-inside: avoid; }
+  figure img { max-width: 100%; }
+  figcaption { font-family: var(--sans); font-size: 8.8pt; color: var(--ink-soft); margin-top: 8px; text-align: left; padding: 0 4px; }
+  figcaption b { color: var(--ink); }
+
+  /* ---------------------------------------------------------------- misc */
+  ul, ol { padding-left: 22px; margin: 0 0 0.9em 0; }
+  li { margin-bottom: 4px; }
+  .lede { font-size: 11.6pt; color: var(--ink-soft); font-style: italic; margin-bottom: 18px; }
+  .byline { font-family: var(--sans); font-size: 8.8pt; color: var(--ink-faint); margin-bottom: 22px; }
+  .footer-rule { border: none; border-top: 1px solid var(--line); margin: 34px 0 10px 0; }
+  .small-print { font-family: var(--sans); font-size: 8.3pt; color: var(--ink-faint); }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .role-tag { display: inline-block; font-family: var(--sans); font-size: 7.6pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: white; background: var(--ink-soft); padding: 2px 8px; border-radius: 3px; margin-right: 5px; }
+  .role-tag.pharm { background: var(--accent); }
+  .role-tag.clin { background: #7c3aed; }
+  .role-tag.code { background: #b45309; }
+
+  /* -------------------------------------------------------------- code appendix */
+  .code-label { font-family: var(--sans); font-size: 9.3pt; font-weight: 700; background: var(--ink); color: white; padding: 7px 12px; border-radius: 4px 4px 0 0; margin-top: 22px; }
+  pre.code { background: #f8fafb; border: 1px solid var(--line); border-top: none; border-radius: 0 0 4px 4px; padding: 12px 14px; overflow-x: auto; margin: 0 0 4px 0; page-break-inside: auto; }
+  pre.code code { background: none; padding: 0; font-size: 7.6pt; line-height: 1.5; white-space: pre-wrap; word-break: break-word; color: #1a2b3c; }
+
+  .toc { font-family: var(--sans); font-size: 10pt; }
+  .toc ol { list-style: none; padding-left: 0; counter-reset: tocnum; }
+  .toc li { margin-bottom: 9px; display: flex; }
+  .toc .toc-title { flex: 1; }
+  .toc .toc-num { color: var(--accent); font-weight: 700; width: 26px; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ COVER -->
+<div class="cover">
+  <div class="kicker">Validation report</div>
+  <h1>Does the app's own calculation agree with the trusted reference method?</h1>
+  <div class="subtitle">Estimation-engine validation of complementtdm against NONMEM POSTHOC: risk analysis, method, and results</div>
+  <dl class="meta-grid">
+    <dt>Software</dt><dd>complementtdm v0.32.0, model-informed precision dosing for eculizumab, ravulizumab and crovalimab</dd>
+    <dt>Prepared by</dt><dd>Rob ter Heine, Radboud University Medical Center, Dept. of Clinical Pharmacy</dd>
+    <dt>Reviewer roles</dt><dd>Pharmacometrician · Clinical pharmacologist · HTML/software engineer</dd>
+    <dt>Reference method</dt><dd>NONMEM 7.6 via PsN 5.7.1, licensed to Radboudumc</dd>
+    <dt>Date</dt><dd>15 September 2026</dd>
+  </dl>
+  <div class="verdict-strip">
+    <b>Verdict: agreement confirmed.</b>
+    All 48 individual parameter estimates tested (3 drugs, 14 synthetic patients, including
+    below-detection-limit samples and a patient-group-specific model variant) matched the
+    reference method to within optimizer precision. The largest disagreement found was
+    16&#215; tighter than the threshold set before testing began.
+  </div>
+</div>
+
+<!-- ============================================================ TOC -->
+<section class="no-break-before">
+<h2>Contents</h2>
+<div class="toc">
+<ol>
+<li><span class="toc-num">&nbsp;</span><span class="toc-title">How to read this report</span></li>
+<li><span class="toc-num">&nbsp;</span><span class="toc-title">Executive summary</span></li>
+<li><span class="toc-num">1</span><span class="toc-title">Introduction</span></li>
+<li><span class="toc-num">2</span><span class="toc-title">Risk analysis and reasoning</span></li>
+<li><span class="toc-num">3</span><span class="toc-title">Method</span></li>
+<li><span class="toc-num">4</span><span class="toc-title">Results</span></li>
+<li><span class="toc-num">5</span><span class="toc-title">Discussion</span></li>
+<li><span class="toc-num">6</span><span class="toc-title">Conclusions and recommendations</span></li>
+<li><span class="toc-num">A</span><span class="toc-title">Appendix A: NONMEM control streams, as run</span></li>
+<li><span class="toc-num">B</span><span class="toc-title">Appendix B: JavaScript implementation (population model and estimation engine)</span></li>
+<li><span class="toc-num">C</span><span class="toc-title">Appendix C: Reproducibility</span></li>
+</ol>
+</div>
+
+<h2 style="margin-top:32px">How to read this report</h2>
+<p>This report has two intended readerships at once, and every section is written for both.
+A box like this one gives the plain-language version of what follows (what was checked,
+and why it matters for a patient) for a clinical reader without a pharmacometrics or
+statistics background. The text underneath it gives the technical detail: the exact method,
+the numbers, and the reasoning a pharmacometrician, a clinical pharmacologist or the software's
+own engineer would want to check. Neither is a summary of the other; read the box for the
+takeaway, read the section for the evidence behind it.</p>
+<div class="plain"><span class="plain-label">In plain terms</span>
+<p>Skip straight to the boxes like this one if you want the two-minute version of the whole
+report. Read everything if you want to audit it.</p></div>
+<p>Role tags mark which reviewer perspective a passage speaks most directly to, where that
+is useful to know: <span class="role-tag clin">clinical</span> for patient-facing reasoning,
+<span class="role-tag pharm">pharmacometric</span> for modelling/statistical method, and
+<span class="role-tag code">software</span> for implementation and engineering process.</p>
+</section>
+
+<!-- ============================================================ EXEC SUMMARY -->
+<section>
+<h2>Executive summary</h2>
+<div class="plain"><span class="plain-label">In plain terms</span>
+<p><b>What this app does, in one sentence:</b> for a specific patient, it works out how quickly
+their body clears the drug and how much of it distributes into their blood, using their weight
+(and, for crovalimab, age) and any measured blood levels, and uses that to predict future levels
+and how likely they are to stay above the treatment target.</p>
+<p><b>What this report checks:</b> the app does that calculation itself, in the browser, rather
+than sending it to specialist software. This report checks whether the app's own calculation
+lands on the same personal numbers that NONMEM, the specialist software these three drugs' own
+dosing models were built with, would give, for the same patient data. If it does, the app's core calculation can be
+trusted the same way the underlying published models already are. If it doesn't, the app could
+quietly be giving a clinician the wrong number to act on.</p>
+<p><b>What we found:</b> across 3 drugs, 14 realistic patient scenarios and 48 individual
+numbers compared, the app agreed with NONMEM every time, typically to five or more decimal
+places. The one deliberate check built into the method (sabotaging one input on purpose to
+confirm the comparison would actually notice a real disagreement) worked exactly as intended.</p>
+</div>
+
+<p class="lede">Three drugs, one shared estimation engine, one open question: does the app's own
+optimizer find the same answer NONMEM's would, for the same patient?</p>
+
+<p>complementtdm individualizes a forecast for a patient using MAP-Bayesian estimation, an
+algorithm that, given a patient's weight, any measured concentrations, and a population model,
+finds the most probable personal values of that patient's own clearance and volume of
+distribution. This is the single calculation every other number in the app is built on: the
+predicted concentration curve, the trough table, and the probability of staying above target
+all follow directly from it. Two things about the app's implementation had already been checked
+before this exercise: that its differential equations reproduce the published models exactly,
+and that every population parameter is transcribed correctly (§1). But the estimation
+algorithm itself, the step that turns a specific patient's data into that patient's personal
+numbers, had never been checked against an independent reference implementation. This report is
+that check.</p>
+
+<p>The reference is NONMEM's own POSTHOC method: the standard, widely used way to compute
+exactly the same statistical quantity (a patient's most probable individual parameters, given
+a population model held fixed) that the app's own optimizer computes. Fourteen synthetic
+patients were generated (true, known parameters; realistic, noisy measurements) and fit twice:
+once by the app's own engine, once by real NONMEM 7.6, run through PsN on this institution's
+own licensed installation. Across all three drugs, across sparse and rich sampling, across a
+below-detection-limit sample, a patient-group-specific model variant (aHUS), and a non-default
+infusion duration, all 48 resulting personal-parameter comparisons agreed to within a strict,
+pre-declared tolerance, most by several orders of magnitude more than that tolerance required.</p>
+
+<table class="tbl" style="margin-top:22px"><thead><tr><th>Question</th><th>Answer</th></tr></thead><tbody>
+<tr><td>Does the app's calculation agree with NONMEM's, for the same patient?</td><td><span class="pass-badge">Yes, 48/48</span></td></tr>
+<tr><td>Was the below-detection-limit ("below LLOQ") calculation checked too?</td><td><span class="pass-badge">Yes, 3/3 scenarios, one per drug</span></td></tr>
+<tr><td>Was the aHUS-specific simplification checked on its own terms?</td><td><span class="pass-badge">Yes, 2/2 scenarios</span></td></tr>
+<tr><td>Was the new custom-infusion-duration feature checked?</td><td><span class="pass-badge">Yes, 1/1 scenario</span></td></tr>
+<tr><td>Was the comparison method itself verified capable of detecting a real error?</td><td><span class="pass-badge">Yes, deliberate sabotage test (§4.4)</span></td></tr>
+<tr><td>Is everything about the app checked by this report?</td><td><span class="pass-badge small" style="background:#fef3c7;color:#92400e">No, see §5 and §6</span></td></tr>
+</tbody></table>
+</section>
+<!-- ============================================================ 1 INTRO -->
+<section>
+<h2><span class="num">1.</span> Introduction</h2>
+<div class="plain"><span class="plain-label">In plain terms</span>
+<p>complementtdm is a browser-based tool that helps predict blood levels of three
+complement-inhibiting antibody drugs (eculizumab, ravulizumab, crovalimab), used for
+conditions like PNH and aHUS. It does this by adjusting a published population model to
+a specific patient, using their weight and any measured blood levels. This section explains
+what "validation" means for a tool like this, and what part of it this particular report
+covers.</p></div>
+
+<p>complementtdm is a single-file, offline web application for model-informed precision
+dosing of three complement C5 inhibitors. For a given patient, it fits a published population
+pharmacokinetic (PK) model to that patient's weight, disease, and any measured concentrations,
+using MAP-Bayesian estimation followed by MCMC sampling, and reports a predicted
+concentration-time curve, a trough table, and the probability of staying above a clinically
+chosen target concentration.</p>
+
+<p>A tool that feeds directly into a dosing decision carries a correspondingly direct
+obligation to demonstrate that its calculations are correct, not merely that they look
+plausible. This project treats validation as a body of evidence built up in layers, each
+layer checking a different, specific thing that could be wrong, rather than one broad claim
+of "it works":</p>
+
+<ul>
+<li><b>Is the model coded correctly?</b> Checked separately (<code>MODEL_VALIDATION.md</code>):
+an independent, separately written numerical solver, built directly from each drug's NONMEM
+control stream, reproduces the app's own predicted concentrations to within 0.001%. Every
+population parameter (clearance, volume, variability, residual error) is checked automatically
+against the control-stream files themselves, not against a hand-typed reference table.</li>
+<li><b>Is the statistical method sound?</b> Checked separately (<code>BAYES_AUDIT.md</code>): an
+internal review of the objective function, the optimizer, and an aggregate calibration study
+confirming the reported uncertainty ranges behave as advertised on average, across many
+simulated patients.</li>
+<li><b>Does the estimation step itself agree with an independent, trusted reference
+implementation, for real patient data?</b> <b>This report.</b> Not "is the model right" (that
+is already established) but "given the same patient data and the same model, does the app's
+own optimizer, running in a browser, find the same personal answer an established piece of
+pharmacometric software would?"</li>
+</ul>
+
+<p>The third question is the one with the most direct clinical consequence and, until now, the
+least external evidence behind it: it is the step that converts a population model into a
+number for <i>this</i> patient. Sections 2–4 set out why that gap mattered enough to close, how
+it was closed, and what was found.</p>
+</section>
+
+<!-- ============================================================ 2 RISK -->
+<section>
+<h2><span class="num">2.</span> Risk analysis and reasoning</h2>
+<div class="plain"><span class="plain-label">In plain terms</span>
+<p>Not every part of a piece of software carries the same risk if it's wrong. This section
+walks through the app's main working parts, asks what would actually happen to a patient if
+each one had a hidden error, and uses that to decide where independent checking was worth the
+most effort. The one part flagged as the priority (turning a patient's own data into their
+personal dose-prediction numbers) is exactly the part this report checks.</p></div>
+
+<p><span class="role-tag clin">clinical</span>The table below is a structured failure-mode
+assessment: for each major component, what could go wrong, what that would actually mean for a
+patient if it happened silently, what already stands between that failure and a clinician, and
+what residual risk was left before this exercise. It is ordered by that residual risk, highest
+first, since that is what should determine where further validation effort goes.</p>
+
+{{RISK_TABLE}}
+
+<p>Two components (R1, R2) already have strong, automated, independent evidence behind them and
+are not revisited here. Two (R7, R8) are explicitly out of scope for a numerical-estimation
+report, for reasons given where they are discussed in §5 and §6. The remaining four (R3–R6) are
+different code paths inside the same estimation engine, each with its own, previously
+unverified, risk, and together they define the scope of this report: R3 is the estimation
+engine's core behaviour and carries by far the largest consequence if wrong, since it is the
+step that produces the number a clinician actually reads; R4, R5 and R6 are specific,
+higher-risk branches through that same engine (a censored measurement, a patient-group-specific
+prior, and a recently added feature), each folded in as its own tested scenario rather than
+assumed to behave the same as the general case just because the general case checks out.</p>
+</section>
+
+<!-- ============================================================ 3 METHOD -->
+<section>
+<h2><span class="num">3.</span> Method</h2>
+<div class="plain"><span class="plain-label">In plain terms</span>
+<p>We built 14 realistic, fake patients from scratch. For each one, we picked a "true" personal
+clearance and volume, simulated what their blood levels would actually look like with some
+realistic measurement noise added, and then asked two separate pieces of software (the app
+itself, and NONMEM, the specialist reference program) to work out that patient's personal
+numbers from the (noisy) measurements alone, exactly as they would for a real patient. If both
+land in the same place, that is strong evidence the app's own calculation is doing the same
+thing a trusted, independently built tool would do.</p></div>
+
+<h3>3.1 What is actually being compared</h3>
+<p><span class="role-tag pharm">pharmacometric</span>NONMEM's classic <code>POSTHOC</code>
+method computes a patient's empirical Bayes estimate: the single most probable value of that
+patient's individual parameters, given the population model held fixed. That is exactly the
+statistical quantity the app's own MAP (maximum a posteriori) step computes. It is the same
+mathematical object, found by a different search algorithm (NONMEM's own internal method,
+against a Nelder–Mead simplex search in the app's own <code>src/bayes.js</code>). The comparison
+is meaningful specifically because both engines are now confirmed to optimize the <i>same
+objective function</i>: reading the app's own objective (Appendix B.2) shows it is the sum, per
+measurement, of <code>(observed − predicted)² / variance + log(variance)</code>, plus a term for
+how far the patient's parameters sit from the population average. This is the same Laplacian
+−2·log-posterior NONMEM computes internally. Two independently written optimizers converging on
+the same optimum of the same function is a real test of the app's implementation, not a
+foregone conclusion. §4.4 demonstrates this concretely, by breaking the comparison on purpose
+and confirming it notices.</p>
+
+<h3>3.2 Synthetic patients, and why not real ones</h3>
+<p>No real patient data exists in, or was introduced into, this project. Each synthetic patient
+was generated by drawing a true, known individual parameter set from exactly the statistical
+distribution the app itself assumes as its starting point, simulating that patient's true
+concentration curve on a realistic dosing schedule using the app's own validated simulator, and
+adding the model's own published measurement error to produce "observed" concentrations, data
+that looks exactly like what a real patient's chart would show, with the difference that the
+true underlying answer is known and can be checked against. That true value is reported
+alongside the comparison in §5's tables for transparency, though it is a secondary,
+recovery-style observation, not the pass/fail criterion: a single noisy measurement set only
+recovering the true value approximately is expected, ordinary statistical behaviour, and both
+engines are expected to (and do) shrink toward the population average the same way when the
+data is sparse.</p>
+
+<h3>3.3 The patient panel</h3>
+<p>Fourteen synthetic patients across four separate NONMEM runs (patients for the same drug
+share one dataset as separate subject IDs, the ordinary way NONMEM is used):</p>
+<table class="tbl"><thead><tr><th>Drug</th><th>Patients</th><th>What each one tests</th></tr></thead><tbody>
+<tr><td>Eculizumab (PNH)</td><td>3</td><td>Rich sampling; sparse, trough-only sampling; trough-only with one below-detection-limit sample (R4)</td></tr>
+<tr><td>Eculizumab (aHUS)</td><td>2</td><td>The disease-specific simplified prior (R5), rich and sparse sampling</td></tr>
+<tr><td>Ravulizumab</td><td>4</td><td>Rich; sparse; one below-detection-limit sample (R4); a single trough only, the hardest case for identifying two parameters from one number</td></tr>
+<tr><td>Crovalimab</td><td>5</td><td>Rich sampling (a stress test for the 6-parameter model); sparse; below-detection-limit (R4); a non-default infusion duration (R6); a single trough only</td></tr>
+</tbody></table>
+
+<h3>3.4 A patient-group-specific model needed a matched comparison, not the original one</h3>
+<p><span class="role-tag pharm">pharmacometric</span>The original eculizumab control stream
+models between-occasion variability in aHUS as six separate, occasion-level random effects. The
+app does not do this: it deliberately folds that occasion-level variance into the clearance
+prior instead (a documented simplification, reasoned from the same source the app cites for
+this kind of forecasting), made because the split between "differs between patients" and
+"differs between occasions for the same patient" is not identifiable from the handful of samples
+a real case carries. Comparing the app's aHUS output against the <i>original</i>, unfolded model
+would not have been a fair test. It would have silently compared two different statistical
+models and called any disagreement a bug. The aHUS control stream used here is therefore a
+minimal, explicitly labelled variant of the PNH one: identical in every respect except the one
+number that carries the folded variance (Appendix A.1 vs A.2, the difference is three lines).
+This is the model the app actually claims to implement, so it is the one it is checked against.</p>
+
+<h3>3.5 What counts as agreement</h3>
+<p>Rather than a single, round-number tolerance, the pass criterion uses each estimate's own,
+NONMEM-reported precision: the standard error, read from that patient's own conditional
+covariance (the <code>ETC</code> block NONMEM already reports per subject). A comparison passes
+when</p>
+<div class="callout" style="font-family: var(--mono); text-align:center; font-size:10.5pt; padding: 14px;">
+|app estimate − NONMEM estimate| &lt; 0.1 &#215; (NONMEM's own standard error for that estimate)
+</div>
+<p>so the bar is strict where the data is informative and appropriately looser for a poorly
+identified parameter, rather than a fixed percentage that would mean something different for a
+rich sample than for a single trough. This threshold was fixed before any comparison was run.
+Every one of the 48 comparisons is reported individually in §5 with its own numbers, not folded
+into a single pass rate.</p>
+
+<h3>3.6 Execution</h3>
+<ol>
+<li>Generate the fourteen synthetic patients (fixed random seed, so the exercise is exactly
+reproducible; see Appendix C).</li>
+<li>Fit each with the app's own engine (the identical code path the web interface itself uses,
+run outside the browser for automation, not a re-implementation).</li>
+<li>Build the four NONMEM datasets and control streams (Appendix A), run through PsN 5.7.1 /
+NONMEM 7.6, licensed to Radboud University Medical Center, Department of Clinical Pharmacy,
+confirmed working on the machine this report was produced on before any comparison was
+attempted.</li>
+<li>Parse NONMEM's own output, compare against the app's output under §3.5's criterion, tabulate
+(§5).</li>
+</ol>
+</section>
+
+<!-- ============================================================ 4 RESULTS -->
+<section>
+<h2><span class="num">4.</span> Results</h2>
+<div class="plain"><span class="plain-label">In plain terms</span>
+<p>Every single one of the 48 numbers compared matched between the app and NONMEM, almost to the
+limit of what a computer can represent, not just "close enough," but agreeing to four or five
+decimal places in nearly every case. The two figures below show this two ways: one shows every
+point falling exactly on the line where "app's answer" equals "NONMEM's answer"; the other shows
+how far each result actually sits from the line the study had agreed in advance would count as a
+failure. Every single point is nowhere near it.</p></div>
+
+<h3>4.1 Overall agreement</h3>
+<figure>
+<img src="fig1_agreement.png" alt="Scatter plot of app MAP estimates against NONMEM POSTHOC estimates, all 48 points falling on the line of identity">
+<figcaption><b>Figure 1.</b> Every one of the 48 individual parameter estimates compared,
+app (vertical axis) against NONMEM (horizontal axis). A point sitting exactly on the diagonal
+means the two calculations produced an identical answer for that patient and that parameter.
+Every point does, across the full range of values the panel produced, from the most confidently
+estimated parameters to the most uncertain ones.</figcaption>
+</figure>
+
+<h3>4.2 Margin against the pre-set threshold</h3>
+<figure>
+<img src="fig2_deviation.png" alt="Dot plot of deviation as a fraction of standard error for all 48 comparisons, all far below the 0.1 threshold line">
+<figcaption><b>Figure 2.</b> The same 48 comparisons, this time showing exactly what §3.5's
+criterion measures: how far apart the two answers are, expressed as a fraction of that
+estimate's own statistical uncertainty (log scale, since the true range spans nine orders of
+magnitude). The red line is the threshold fixed before testing began. Every comparison sits far
+to its left; the closest approach (crovalimab, the below-detection-limit patient, the absorption-
+rate parameter) is still roughly sixteen times tighter than the threshold required.</figcaption>
+</figure>
+
+<h3>4.3 Summary, one row per patient</h3>
+<p><span class="role-tag clin">clinical</span>Each row below is one synthetic patient; "largest
+deviation" is the worst of that patient's own individual parameters (a 6-parameter crovalimab
+patient has six chances to fail; the table reports the single closest call).</p>
+{{SUMMARY_TABLE}}
+
+<h3>4.4 The comparison method was checked for whether it can actually fail</h3>
+<p><span class="role-tag pharm">pharmacometric</span>Before trusting forty-eight passes in a
+row, the method itself was tested for whether it is capable of detecting a real problem, not
+only capable of reporting agreement. This follows the same testing discipline used throughout
+this project's own automated test suite: a check that cannot fail is not evidence. One control
+stream's clearance value was deliberately changed from its correct, published value to a wrong
+one, and re-run. The resulting NONMEM estimate for that patient shifted by roughly 4.4 times
+that patient's own standard error; comfortably outside the 0.1 threshold, and correctly flagged
+as a failure by the same, unmodified comparison script used for every other result in this
+report. The file was then restored to its original, byte-for-byte identical content before the
+real comparisons were re-confirmed. The 0-in-48 failure rate reported above is not a property of
+a check that cannot fail.</p>
+
+<h3>4.5 Full numeric results</h3>
+<p class="small-print">Every individual comparison, in full: the complete evidence behind
+§4.1–4.3, included for the reviewer who wants to check any single number rather than trust the
+figures.</p>
+{{DETAIL_TABLES}}
+</section>
+
+<!-- ============================================================ 5 DISCUSSION -->
+<section>
+<h2><span class="num">5.</span> Discussion</h2>
+<div class="plain"><span class="plain-label">In plain terms</span>
+<p>This report answers one specific, important question well: does the app's own calculation
+agree with the trusted reference method, for the personal numbers it reports? Yes, clearly. It
+does not, and was never meant to, answer a different question: is the reported <i>uncertainty
+range</i> (the "90% likely between X and Y" band) the right width? That is a separate, harder
+check, planned as its own future piece of work rather than folded loosely into this one.</p></div>
+
+<p>The result is stronger than "no disagreement was found": across the full range of values the
+panel produced (from confidently estimated parameters backed by rich sampling, to poorly
+identified ones from a single trough), the app and NONMEM did not merely agree within tolerance,
+they agreed to within floating-point optimizer precision in the overwhelming majority of cases.
+That degree of agreement is consistent with the mechanistic explanation given in §3.1 (both
+engines optimizing the identical objective function) and inconsistent with a coincidental or
+partial match. A genuine implementation difference of the kind this report was designed to
+catch would show up as a real, non-trivial gap, not as five-decimal-place agreement, exactly as
+demonstrated by the deliberate sabotage check in §4.4.</p>
+
+<p>The below-detection-limit scenarios (R4) deserve a specific note: censored measurements are
+handled by a separate branch of code from an ordinary quantified measurement, using a different
+mathematical form (a cumulative probability rather than a density), and that branch is
+exercised far less often in routine use than the ordinary case. All three below-detection-limit
+comparisons, one per drug, passed with the same margin as the uncensored cases, evidence that
+this less-travelled code path is mathematically equivalent to NONMEM's own established method
+for the same situation, not merely similarly shaped.</p>
+
+<p>The aHUS-specific result (R5) is worth stating precisely, since it is easy to overstate: this
+report confirms the app's folded-variance simplification is <i>computed correctly</i>. The
+app's engine produces the same individual estimate NONMEM produces under the identical,
+explicitly folded statistical model. It does not, and cannot, independently confirm that folding
+the variance this way is the <i>clinically right</i> simplification to make; that is a modelling
+judgement, reasoned and cited in the app's own documentation, resting on the same statistical
+argument the source publication makes for MAP-Bayesian forecasting with between-occasion
+variability. This report closes the "is it computed right" question and leaves the "is it the
+right thing to compute" question exactly where it already stood.</p>
+
+<h3>What this report does not cover</h3>
+<p>Three things, deliberately: first, the full MCMC posterior (the shape and width of the
+uncertainty band the app actually displays), which would need NONMEM's own Bayesian estimation
+methods and a genuinely different comparison design (distributions, not single numbers), and is
+recommended as separate future work rather than compressed into this exercise where it would
+dilute a currently well-defined, tractable question into an open-ended one (see §6). Second,
+whether the population models themselves are the clinically correct ones to use. That is a
+question for the source publications and the specialists who built them, not for a numerical
+comparison of two implementations of the same model. Third, whether the app's user interface
+correctly displays a number that has already been calculated correctly; a real risk (R8) but a
+different one, already covered by this project's own large automated test suite and an earlier,
+separate usability review.</p>
+</section>
+
+<!-- ============================================================ 6 CONCLUSIONS -->
+<section>
+<h2><span class="num">6.</span> Conclusions and recommendations</h2>
+
+<h3>6.1 Per risk item</h3>
+<table class="tbl"><thead><tr><th>Item</th><th>Status after this report</th><th>Basis</th></tr></thead><tbody>
+<tr><td><b>R3</b>: individual estimation</td><td><span class="pass-badge">Closed, for the scenarios tested</span></td><td>48/48 comparisons agree to within optimizer precision, across 3 drugs, 4 sampling densities, and both the 2-parameter and 6-parameter model structures the app supports.</td></tr>
+<tr><td><b>R4</b>: below-detection-limit handling</td><td><span class="pass-badge">Closed</span></td><td>All three below-detection-limit scenarios agree with NONMEM to within the same tight margin as the uncensored cases.</td></tr>
+<tr><td><b>R5</b>: aHUS folded-variance simplification</td><td><span class="pass-badge">Closed, numerically</span></td><td>The app computes exactly what it claims to compute for this patient group; the clinical appropriateness of the simplification itself is a separate, already-documented judgement, not re-opened here.</td></tr>
+<tr><td><b>R6</b>: custom infusion duration</td><td><span class="pass-badge">Closed</span></td><td>The one tested scenario (a non-default 120-minute loading infusion) agrees with NONMEM exactly, with no special handling needed in the reference model beyond supplying the same duration.</td></tr>
+<tr><td><b>R7</b>: the reported uncertainty range (MCMC posterior)</td><td><span class="pass-badge small" style="background:#fef3c7;color:#92400e">Remains open</span></td><td>Out of scope by design; recommended as a dedicated future exercise (§6.2).</td></tr>
+<tr><td><b>R1, R2, R8</b></td><td><span class="pass-badge">Already closed</span></td><td>By existing, separate evidence; not revisited here.</td></tr>
+</tbody></table>
+
+<h3>6.2 Recommendation</h3>
+<p>The estimation engine's core behaviour (the step that turns a patient's own data into the
+personal numbers a clinician reads and may act on) is validated against an independent,
+trusted reference implementation for the scenarios that matter most: ordinary sampling, sparse
+sampling, a censored measurement, a patient-group-specific model, and a recently added feature.
+No further action is recommended for R3–R6. A dedicated follow-up validating the full MCMC
+posterior (the reported credible interval and probability-of-target-attainment) against NONMEM's
+own Bayesian estimation methods is recommended as the next piece of work, using a distributional
+comparison metric rather than the point-estimate method used here.</p>
+
+<div class="callout focus">
+<b>Overall verdict:</b> for the scenarios and drugs tested, complementtdm's own MAP estimation
+engine computes the same individual patient parameters an independent, industry-standard
+reference implementation (NONMEM, via a licensed, working installation) computes from the same
+data. This is direct evidence for the correctness of the single calculation every other number
+the app displays is built on.
+</div>
+</section>
+
+<!-- ============================================================ APPENDIX A -->
+<section>
+<h2>Appendix A: NONMEM control streams, as run</h2>
+<p class="small-print">Reproduced in full and run unmodified through PsN 5.7.1 / NONMEM 7.6 to
+produce the results in §4–§5. Every population parameter is <code>FIX</code>ed at its published
+value (no population re-estimation occurs); <code>MAXEVAL=0 POSTHOC</code> computes only the
+per-patient individual estimate. The <code>LIKE</code> estimation option is used throughout so
+the below-detection-limit branch can be written explicitly and matches
+<code>src/bayes.js</code>'s own formula exactly (Appendix B.2); because <code>LIKE</code>
+forbids a separate <code>$SIGMA</code> record, the residual-error constants are carried as two
+extra, also-fixed <code>THETA</code>s instead.</p>
+{{APPENDIX_A}}
+</section>
+
+<!-- ============================================================ APPENDIX B -->
+<section>
+<h2>Appendix B: JavaScript implementation</h2>
+<p class="small-print"><span class="role-tag code">software</span>The app's actual source code,
+reproduced in full for the population model and in the estimation-relevant excerpts for the
+optimizer, the two pieces of code this whole report checks against Appendix A. Both ship with
+the project and are covered by its own automated test suite (<code>npm test</code>, 1318
+assertions at the time of this report) on every change.</p>
+{{APPENDIX_B}}
+</section>
+
+<!-- ============================================================ APPENDIX C -->
+<section>
+<h2>Appendix C: Reproducibility</h2>
+<p><span class="role-tag code">software</span>Every figure, table and number in this report is
+generated from code and data checked into the project, not transcribed by hand:</p>
+<ul>
+<li><code>validation/generate_and_fit.js</code>: the full scenario table (dosing, sampling
+times, weight/age, below-detection-limit flags), the synthetic-patient generator (fixed random
+seed 913026), the app-side fit, and the NONMEM dataset writer.</li>
+<li><code>validation/compare.js</code>: parses each NONMEM run's own output file and applies
+the §3.5 criterion.</li>
+<li><code>validation/results.json</code>, <code>validation/comparison.json</code>: the full
+numeric output behind every table in this report.</li>
+<li><code>validation/nonmem/*.csv</code>: the four NONMEM datasets exactly as run.</li>
+<li><code>validation/nonmem/run_*/NM_run1/</code>: raw NONMEM output (<code>psn.lst</code>,
+<code>psn.phi</code>).</li>
+<li><code>validation/build_report.py</code>, <code>validation/report_assets/</code>: the figures
+and this report itself.</li>
+</ul>
+<p class="small-print">Re-running end to end: <code>node validation/generate_and_fit.js</code>,
+then <code>execute &lt;name&gt;_posthoc.mod -dir=run_&lt;name&gt; -clean=1</code> from
+<code>validation/nonmem/</code> for each of the four control streams, then
+<code>node validation/compare.js</code>. A parallel, narrative Markdown version of this material
+is maintained at <code>ESTIMATION_VALIDATION.md</code> in the project root.</p>
+
+<hr class="footer-rule">
+<p class="small-print">complementtdm, model-informed precision dosing for eculizumab,
+ravulizumab and crovalimab. For research use only, not for routine clinical use without local
+validation. Prepared by Rob ter Heine, Radboud University Medical Center, Department of Clinical
+Pharmacy, r.terheine@radboudumc.nl.</p>
+</section>
+
+</body>
+</html>

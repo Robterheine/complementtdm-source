@@ -1,0 +1,622 @@
+[
+  {
+    "id": "ECU-PNH-01",
+    "drug": "eculizumab",
+    "disease": "PNH",
+    "label": "rich sampling (peak + trough x3)",
+    "nmRun": "ecu_pnh",
+    "etas": [
+      {
+        "name": "CL",
+        "etaApp": -0.1191336830798814,
+        "etaNonmem": -0.119135,
+        "etaTrue": -0.08578977598752996,
+        "se": 0.09654247769764353,
+        "diff": 0.000001316920118607512,
+        "ratioOfSE": 0.00001364083613776629,
+        "pass": true
+      },
+      {
+        "name": "V1",
+        "etaApp": -0.16957839509933598,
+        "etaNonmem": -0.169579,
+        "etaTrue": -0.2879201175236725,
+        "se": 0.10702149316842856,
+        "diff": 6.049006640307386e-7,
+        "ratioOfSE": 0.000005652141884048997,
+        "pass": true
+      }
+    ],
+    "allPass": true
+  },
+  {
+    "id": "ECU-PNH-02",
+    "drug": "eculizumab",
+    "disease": "PNH",
+    "label": "sparse, trough-only (routine TDM)",
+    "nmRun": "ecu_pnh",
+    "etas": [
+      {
+        "name": "CL",
+        "etaApp": 0.15516012668527684,
+        "etaNonmem": 0.155159,
+        "etaTrue": 0.21955398356791625,
+        "se": 0.09431765476304,
+        "diff": 0.0000011266852768532232,
+        "ratioOfSE": 0.000011945645591844532,
+        "pass": true
+      },
+      {
+        "name": "V1",
+        "etaApp": 0.021153493419758515,
+        "etaNonmem": 0.021153,
+        "etaTrue": -0.03693152004933365,
+        "se": 0.29079356939244716,
+        "diff": 4.934197585133859e-7,
+        "ratioOfSE": 0.000001696804229695602,
+        "pass": true
+      }
+    ],
+    "allPass": true
+  },
+  {
+    "id": "ECU-PNH-03",
+    "drug": "eculizumab",
+    "disease": "PNH",
+    "label": "trough-only, oldest sample flagged BLQ",
+    "nmRun": "ecu_pnh",
+    "etas": [
+      {
+        "name": "CL",
+        "etaApp": 0.10541948598266163,
+        "etaNonmem": 0.105154,
+        "etaTrue": -0.18817402531693195,
+        "se": 0.10598301750752334,
+        "diff": 0.0002654859826616285,
+        "ratioOfSE": 0.0025049860714032096,
+        "pass": true
+      },
+      {
+        "name": "V1",
+        "etaApp": 0.07187078734349385,
+        "etaNonmem": 0.0716212,
+        "etaTrue": -0.2858432889531001,
+        "se": 0.3016675322271192,
+        "diff": 0.0002495873434938539,
+        "ratioOfSE": 0.0008273589857391244,
+        "pass": true
+      }
+    ],
+    "allPass": true
+  },
+  {
+    "id": "ECU-AHUS-01",
+    "drug": "eculizumab",
+    "disease": "aHUS",
+    "label": "rich sampling, folded-IOV prior (R5)",
+    "nmRun": "ecu_ahus",
+    "etas": [
+      {
+        "name": "CL",
+        "etaApp": 0.5133838029090745,
+        "etaNonmem": 0.513382,
+        "etaTrue": 0.5609467242556488,
+        "se": 0.06412090142847338,
+        "diff": 0.0000018029090744775544,
+        "ratioOfSE": 0.000028117338251844335,
+        "pass": true
+      },
+      {
+        "name": "V1",
+        "etaApp": -0.1630419460801636,
+        "etaNonmem": -0.163043,
+        "etaTrue": -0.14932296560721342,
+        "se": 0.10157115732332678,
+        "diff": 0.0000010539198364023505,
+        "ratioOfSE": 0.000010376172371921058,
+        "pass": true
+      }
+    ],
+    "allPass": true
+  },
+  {
+    "id": "ECU-AHUS-02",
+    "drug": "eculizumab",
+    "disease": "aHUS",
+    "label": "sparse, trough-only, folded-IOV prior",
+    "nmRun": "ecu_ahus",
+    "etas": [
+      {
+        "name": "CL",
+        "etaApp": 0.34455480985806797,
+        "etaNonmem": 0.344554,
+        "etaTrue": 0.17000156040570902,
+        "se": 0.08989293631871194,
+        "diff": 8.098580679405387e-7,
+        "ratioOfSE": 0.000009009140218417365,
+        "pass": true
+      },
+      {
+        "name": "V1",
+        "etaApp": -0.035244805355920276,
+        "etaNonmem": -0.0352447,
+        "etaTrue": 0.504071826705807,
+        "se": 0.2822116227230906,
+        "diff": 1.0535592027960394e-7,
+        "ratioOfSE": 3.7332239991752724e-7,
+        "pass": true
+      }
+    ],
+    "allPass": true
+  },
+  {
+    "id": "RAVU-01",
+    "drug": "ravulizumab",
+    "disease": null,
+    "label": "rich sampling",
+    "nmRun": "ravu",
+    "etas": [
+      {
+        "name": "CL",
+        "etaApp": 0.3560328010141139,
+        "etaNonmem": 0.356033,
+        "etaTrue": 0.2601730397949408,
+        "se": 0.06496514450072438,
+        "diff": 1.989858861017879e-7,
+        "ratioOfSE": 0.0000030629638036065504,
+        "pass": true
+      },
+      {
+        "name": "V1",
+        "etaApp": 0.1688083815319894,
+        "etaNonmem": 0.168808,
+        "etaTrue": 0.26919699736084657,
+        "se": 0.10521311705296064,
+        "diff": 3.815319893907265e-7,
+        "ratioOfSE": 0.000003626277788145717,
+        "pass": true
+      }
+    ],
+    "allPass": true
+  },
+  {
+    "id": "RAVU-02",
+    "drug": "ravulizumab",
+    "disease": null,
+    "label": "sparse, trough-only",
+    "nmRun": "ravu",
+    "etas": [
+      {
+        "name": "CL",
+        "etaApp": -0.06749889239131382,
+        "etaNonmem": -0.0674989,
+        "etaTrue": -0.17676509223539344,
+        "se": 0.07695160817033,
+        "diff": 7.608686181104218e-9,
+        "ratioOfSE": 9.887624654006745e-8,
+        "pass": true
+      },
+      {
+        "name": "V1",
+        "etaApp": -0.012562198330667068,
+        "etaNonmem": -0.0125622,
+        "etaTrue": 0.03142302797018691,
+        "se": 0.14958676412035926,
+        "diff": 1.6693329323025363e-9,
+        "ratioOfSE": 1.1159629945329732e-8,
+        "pass": true
+      }
+    ],
+    "allPass": true
+  },
+  {
+    "id": "RAVU-03",
+    "drug": "ravulizumab",
+    "disease": null,
+    "label": "trough-only, one sample flagged BLQ",
+    "nmRun": "ravu",
+    "etas": [
+      {
+        "name": "CL",
+        "etaApp": -0.28013639478817565,
+        "etaNonmem": -0.280182,
+        "etaTrue": -0.23229339723660122,
+        "se": 0.1002561718798399,
+        "diff": 0.000045605211824339964,
+        "ratioOfSE": 0.00045488682610981006,
+        "pass": true
+      },
+      {
+        "name": "V1",
+        "etaApp": -0.10553454234496693,
+        "etaNonmem": -0.105554,
+        "etaTrue": 0.002252202385418914,
+        "se": 0.14275048161039597,
+        "diff": 0.000019457655033069954,
+        "ratioOfSE": 0.00013630535472500239,
+        "pass": true
+      }
+    ],
+    "allPass": true
+  },
+  {
+    "id": "RAVU-04",
+    "drug": "ravulizumab",
+    "disease": null,
+    "label": "minimal: single trough (worst-case identifiability)",
+    "nmRun": "ravu",
+    "etas": [
+      {
+        "name": "CL",
+        "etaApp": 0.033450616687684356,
+        "etaNonmem": 0.0334506,
+        "etaTrue": -0.41069384015563426,
+        "se": 0.13635065089686957,
+        "diff": 1.6687684359362187e-8,
+        "ratioOfSE": 1.2238800658153157e-7,
+        "pass": true
+      },
+      {
+        "name": "V1",
+        "etaApp": 0.0099737675345998,
+        "etaNonmem": 0.00997373,
+        "etaTrue": -0.10275462961786974,
+        "se": 0.1518278630555011,
+        "diff": 3.7534599799798896e-8,
+        "ratioOfSE": 2.472181261358991e-7,
+        "pass": true
+      }
+    ],
+    "allPass": true
+  },
+  {
+    "id": "CROV-01",
+    "drug": "crovalimab",
+    "disease": null,
+    "label": "rich sampling (6-eta stress test)",
+    "nmRun": "crov",
+    "etas": [
+      {
+        "name": "CL",
+        "etaApp": -0.012238393062326349,
+        "etaNonmem": -0.0122384,
+        "etaTrue": -0.5860621412021154,
+        "se": 0.15988527136668967,
+        "diff": 6.937673650841969e-9,
+        "ratioOfSE": 4.339157441795077e-8,
+        "pass": true
+      },
+      {
+        "name": "V1",
+        "etaApp": 0.07299454580189707,
+        "etaNonmem": 0.0729945,
+        "etaTrue": 0.11674831632241876,
+        "se": 0.14804222370661688,
+        "diff": 4.580189706671067e-8,
+        "ratioOfSE": 3.0938401166871634e-7,
+        "pass": true
+      },
+      {
+        "name": "Q",
+        "etaApp": 0.16664583782679784,
+        "etaNonmem": 0.166646,
+        "etaTrue": -0.6294632152477023,
+        "se": 0.5795946859659774,
+        "diff": 1.6217320214506614e-7,
+        "ratioOfSE": 2.7980450144186763e-7,
+        "pass": true
+      },
+      {
+        "name": "V2",
+        "etaApp": -0.2777371443929677,
+        "etaNonmem": -0.277737,
+        "etaTrue": -1.2204357181212058,
+        "se": 0.5105878964487897,
+        "diff": 1.4439296769364063e-7,
+        "ratioOfSE": 2.8279747463250487e-7,
+        "pass": true
+      },
+      {
+        "name": "KA",
+        "etaApp": 0.006511428973900748,
+        "etaNonmem": 0.0065114,
+        "etaTrue": 0.271844738936255,
+        "se": 0.27805736818146,
+        "diff": 2.8973900748248405e-8,
+        "ratioOfSE": 1.0420116157231288e-7,
+        "pass": true
+      },
+      {
+        "name": "F",
+        "etaApp": 0.259528959966611,
+        "etaNonmem": 0.259529,
+        "etaTrue": -1.9268895742393575,
+        "se": 0.8997294037653766,
+        "diff": 4.00333889927218e-8,
+        "ratioOfSE": 4.4494921278755215e-8,
+        "pass": true
+      }
+    ],
+    "allPass": true
+  },
+  {
+    "id": "CROV-02",
+    "drug": "crovalimab",
+    "disease": null,
+    "label": "sparse, trough-only",
+    "nmRun": "crov",
+    "etas": [
+      {
+        "name": "CL",
+        "etaApp": -0.04531257156137541,
+        "etaNonmem": -0.0453126,
+        "etaTrue": -0.01234007363424246,
+        "se": 0.1707700207881934,
+        "diff": 2.8438624594118167e-8,
+        "ratioOfSE": 1.6653171594673918e-7,
+        "pass": true
+      },
+      {
+        "name": "V1",
+        "etaApp": 0.02703875323526416,
+        "etaNonmem": 0.0270387,
+        "etaTrue": -0.05626222421422839,
+        "se": 0.22386603136697628,
+        "diff": 5.323526416217694e-8,
+        "ratioOfSE": 2.377996511445281e-7,
+        "pass": true
+      },
+      {
+        "name": "Q",
+        "etaApp": 0.07912396774997045,
+        "etaNonmem": 0.079124,
+        "etaTrue": 0.26006476922137006,
+        "se": 0.544194818056916,
+        "diff": 3.225002954965195e-8,
+        "ratioOfSE": 5.926191959122807e-8,
+        "pass": true
+      },
+      {
+        "name": "V2",
+        "etaApp": 0.11870652610520466,
+        "etaNonmem": 0.118707,
+        "etaTrue": -0.2095450984805189,
+        "se": 0.48823662296062964,
+        "diff": 4.7389479533588297e-7,
+        "ratioOfSE": 9.70625252284888e-7,
+        "pass": true
+      },
+      {
+        "name": "KA",
+        "etaApp": -0.022888337351434744,
+        "etaNonmem": -0.0228883,
+        "etaTrue": 0.7144323072259399,
+        "se": 0.40190172928217166,
+        "diff": 3.735143474375979e-8,
+        "ratioOfSE": 9.293673558079089e-8,
+        "pass": true
+      },
+      {
+        "name": "F",
+        "etaApp": 0.0925861214293614,
+        "etaNonmem": 0.0925861,
+        "etaTrue": 1.5498386766187915,
+        "se": 0.9626250568108021,
+        "diff": 2.1429361396485547e-8,
+        "ratioOfSE": 2.226137917859887e-8,
+        "pass": true
+      }
+    ],
+    "allPass": true
+  },
+  {
+    "id": "CROV-03",
+    "drug": "crovalimab",
+    "disease": null,
+    "label": "trough-only, one sample flagged BLQ",
+    "nmRun": "crov",
+    "etas": [
+      {
+        "name": "CL",
+        "etaApp": 0.002345351641621445,
+        "etaNonmem": 0.00249649,
+        "etaTrue": -0.06189681469417166,
+        "se": 0.19634688691191413,
+        "diff": 0.000151138358378555,
+        "ratioOfSE": 0.0007697517427223548,
+        "pass": true
+      },
+      {
+        "name": "V1",
+        "etaApp": 0.09367384422967934,
+        "etaNonmem": 0.0930399,
+        "etaTrue": 0.2625591676718282,
+        "se": 0.24060610964811346,
+        "diff": 0.0006339442296793424,
+        "ratioOfSE": 0.002634780266413376,
+        "pass": true
+      },
+      {
+        "name": "Q",
+        "etaApp": 0.4259900695196841,
+        "etaNonmem": 0.4236,
+        "etaTrue": 0.5634014426116188,
+        "se": 0.511501710652076,
+        "diff": 0.0023900695196841237,
+        "ratioOfSE": 0.004672652055527243,
+        "pass": true
+      },
+      {
+        "name": "V2",
+        "etaApp": 0.8071395618193151,
+        "etaNonmem": 0.805551,
+        "etaTrue": 0.7634650942879361,
+        "se": 0.5092563205302415,
+        "diff": 0.001588561819315104,
+        "ratioOfSE": 0.0031193757549461175,
+        "pass": true
+      },
+      {
+        "name": "KA",
+        "etaApp": -0.1768859849324244,
+        "etaNonmem": -0.173884,
+        "etaTrue": -0.11531784887754999,
+        "se": 0.47488314352059285,
+        "diff": 0.003001984932424401,
+        "ratioOfSE": 0.006321523459790319,
+        "pass": true
+      },
+      {
+        "name": "F",
+        "etaApp": -0.698257351439266,
+        "etaNonmem": -0.69851,
+        "etaTrue": -0.9637752129002478,
+        "se": 0.9098236092781942,
+        "diff": 0.0002526485607339257,
+        "ratioOfSE": 0.00027768960725734924,
+        "pass": true
+      }
+    ],
+    "allPass": true
+  },
+  {
+    "id": "CROV-04",
+    "drug": "crovalimab",
+    "disease": null,
+    "label": "non-default IV loading duration (120 min, R6)",
+    "nmRun": "crov",
+    "etas": [
+      {
+        "name": "CL",
+        "etaApp": 0.05345139591397659,
+        "etaNonmem": 0.0534514,
+        "etaTrue": 0.2753323168662677,
+        "se": 0.1987978873127177,
+        "diff": 4.0860234154505015e-9,
+        "ratioOfSE": 2.0553656131279753e-8,
+        "pass": true
+      },
+      {
+        "name": "V1",
+        "etaApp": -0.11648254862951667,
+        "etaNonmem": -0.116483,
+        "etaTrue": -0.19879838342128936,
+        "se": 0.0952686727103931,
+        "diff": 4.5137048333698804e-7,
+        "ratioOfSE": 0.000004737868918454522,
+        "pass": true
+      },
+      {
+        "name": "Q",
+        "etaApp": -0.020654354387012783,
+        "etaNonmem": -0.0206543,
+        "etaTrue": 1.241753478155286,
+        "se": 0.5478110988287842,
+        "diff": 5.438701278226432e-8,
+        "ratioOfSE": 9.928059672128462e-8,
+        "pass": true
+      },
+      {
+        "name": "V2",
+        "etaApp": 0.3336760055173062,
+        "etaNonmem": 0.333676,
+        "etaTrue": 0.6900463650773684,
+        "se": 0.5985574324991713,
+        "diff": 5.517306223001839e-9,
+        "ratioOfSE": 9.21767222898778e-9,
+        "pass": true
+      },
+      {
+        "name": "KA",
+        "etaApp": 0.022978023781953176,
+        "etaNonmem": 0.022978,
+        "etaTrue": 0.26553716082333145,
+        "se": 0.2947051068441129,
+        "diff": 2.3781953177592907e-8,
+        "ratioOfSE": 8.069745866389957e-8,
+        "pass": true
+      },
+      {
+        "name": "F",
+        "etaApp": -0.5068796387113713,
+        "etaNonmem": -0.50688,
+        "etaTrue": 1.3164711481160278,
+        "se": 0.9501620914349299,
+        "diff": 3.6128862868078926e-7,
+        "ratioOfSE": 3.802389423210655e-7,
+        "pass": true
+      }
+    ],
+    "allPass": true
+  },
+  {
+    "id": "CROV-05",
+    "drug": "crovalimab",
+    "disease": null,
+    "label": "minimal: single trough (worst-case identifiability)",
+    "nmRun": "crov",
+    "etas": [
+      {
+        "name": "CL",
+        "etaApp": 0.08781277536297688,
+        "etaNonmem": 0.0878127,
+        "etaTrue": -0.4840783214881832,
+        "se": 0.20855550819865679,
+        "diff": 7.536297688681692e-8,
+        "ratioOfSE": 3.613569238124889e-7,
+        "pass": true
+      },
+      {
+        "name": "V1",
+        "etaApp": 0.009923310819554679,
+        "etaNonmem": 0.00992345,
+        "etaTrue": 0.21736850040988687,
+        "se": 0.23192153845643573,
+        "diff": 1.3918044532157392e-7,
+        "ratioOfSE": 6.001186705120001e-7,
+        "pass": true
+      },
+      {
+        "name": "Q",
+        "etaApp": -0.012514486371209242,
+        "etaNonmem": -0.0125151,
+        "etaTrue": -0.5647267237375228,
+        "se": 0.5543572855117898,
+        "diff": 6.136287907573118e-7,
+        "ratioOfSE": 0.0000011069193222396309,
+        "pass": true
+      },
+      {
+        "name": "V2",
+        "etaApp": 0.5874534543672416,
+        "etaNonmem": 0.587453,
+        "etaTrue": 1.8882385756549966,
+        "se": 0.7043273386714447,
+        "diff": 4.5436724160907715e-7,
+        "ratioOfSE": 6.451080579466628e-7,
+        "pass": true
+      },
+      {
+        "name": "KA",
+        "etaApp": 0.04683039950409231,
+        "etaNonmem": 0.0468302,
+        "etaTrue": 0.18387436479123895,
+        "se": 0.39568295389111724,
+        "diff": 1.9950409230889976e-7,
+        "ratioOfSE": 5.042018877664329e-7,
+        "pass": true
+      },
+      {
+        "name": "F",
+        "etaApp": -1.313743033653424,
+        "etaNonmem": -1.31374,
+        "etaTrue": -0.890979579725333,
+        "se": 0.9386378428339655,
+        "diff": 0.000003033653424022731,
+        "ratioOfSE": 0.000003231974341523912,
+        "pass": true
+      }
+    ],
+    "allPass": true
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "name": "complement-tdm",
+  "version": "0.46.0",
+  "private": true,
+  "description": "Model-informed precision dosing / therapeutic drug monitoring tool for eculizumab, ravulizumab and crovalizumab (PK only). Single-file HTML app; multi-drug population PK registry.",
+  "scripts": {
+    "test": "node tests/run_all.js",
+    "build": "node build.mjs",
+    "golden": "python3 tools/gen_golden.py",
+    "verify": "node tools/verify_control_streams.mjs",
+    "calibration": "node tools/calibration_study.mjs"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}

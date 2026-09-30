@@ -1,0 +1,291 @@
+Mon Sep 14 16:25:09 CEST 2026
+;; (PNH. EQ.1: CL uses ETA(1) with no IOV term added -- the app has no IOV
+;; component in the PNH prior either, M.priorOmega('PNH','eculizumab') is
+;; the plain 2-dim [0.1546, 0.0812]). The IOV/OCC machinery of the original
+;; file is dropped entirely: it is inert for PNH subjects there too (only
+;; the PNH.EQ.0 branch ever references IOV), so nothing is lost.
+;; Estimation-engine validation -- eculizumab, PNH.
+;; Adapted from ../../nonmemcontrolstream.txt for POSTHOC individual
+;; estimation with population parameters FIXED at their published values.
+;; Structural ($PK/$DES) code is verbatim from the original PNH branch
+$PROBLEM    Estimation-engine validation -- eculizumab PNH POSTHOC
+$INPUT      ID TIME AMT RATE DV MDV EVID CMT CENS WT AGE
+$DATA      ecu_pnh.csv IGNORE=@
+$SUBROUTINE ADVAN13 TOL=9
+$MODEL      COMP=(CENTRAL) COMP=(PERIPHERAL)
+$PK
+CL = THETA(1) * ((WT/70)**0.75) * EXP(ETA(1))
+V1 = THETA(2) * (WT/70) * EXP(ETA(2))
+V2 = THETA(5) * (WT/70)
+Q  = THETA(6) * ((WT/70)**0.75)
+VM = THETA(3) * ((WT/70)**0.75)
+KM = THETA(4)
+S1 = V1
+KEL = CL/V1
+K12 = Q/V1
+K21 = Q/V2
+
+$DES
+C1 = A(1)/S1
+DADT(1) = -KEL*A(1) - ((VM*C1)/(KM+C1)) - K12*A(1) + K21*A(2)
+DADT(2) = -K21*A(2) + K12*A(1)
+
+;; With the LIKE (user-supplied likelihood) option NONMEM forbids a $SIGMA
+;; record entirely -- the residual-variance constants are carried as two
+;; extra FIXED THETAs instead (7, 8) and used explicitly below, matching
+;; src/bayes.js's own `v = sig.ADD + sig.PROP*pred*pred` formula exactly.
+;; NONMEM's LIKE option expects Y to be the LIKELIHOOD itself (a positive
+;; density/probability), not its log -- NONMEM applies -2*LOG(Y) internally.
+$ERROR
+IPRED = F
+SD    = SQRT(THETA(7) + THETA(8)*IPRED*IPRED)
+IF (CENS.EQ.0) THEN
+   Y = (1/SQRT(6.283185307179586*SD*SD)) * EXP(-0.5*((DV-IPRED)/SD)**2)
+ELSE
+   Y = PHI((DV-IPRED)/SD)               ; DV carries the LLOQ on a censored row
+ENDIF
+
+$THETA  0.25 FIX ; 1 CL  L/day SABOTAGE
+ 4.299 FIX ; 2 V1  L
+ 25.64 FIX ; 3 VM  mg/day
+ 13.54 FIX ; 4 KM  mg/L
+ 2.63 FIX ; 5 V2  L
+ 0.6243 FIX ; 6 Q   L/day
+ 19.1 FIX ; 7 SIGMA additive variance
+ 0.0185 FIX ; 8 SIGMA proportional variance
+$OMEGA  0.1546  FIX  ; 1 IIV CL  (PNH: no IOV folded in)
+ 0.0812  FIX  ;   2 IIV V1
+$ESTIMATION METHOD=1 LAPLACE LIKE NOABORT MAXEVAL=0 PRINT=1 POSTHOC
+
+
+NM-TRAN MESSAGES
+  
+ WARNINGS AND ERRORS (IF ANY) FOR PROBLEM    1
+             
+ (WARNING  2) NM-TRAN INFERS THAT THE DATA ARE POPULATION.
+
+License Registered to: Radboud University Medical Center Dept of Clinical Pharmacy 864
+Expiration Date:    14 AUG 2027
+Current Date:       14 SEP 2026
+Days until program expires : 335
+1NONLINEAR MIXED EFFECTS MODEL PROGRAM (NONMEM) VERSION 7.6.0 (nm760)
+ ORIGINALLY DEVELOPED BY STUART BEAL, LEWIS SHEINER, AND ALISON BOECKMANN
+ CURRENT DEVELOPERS ARE ROBERT BAUER, ICON DEVELOPMENT SOLUTIONS,
+ AND ALISON BOECKMANN. IMPLEMENTATION, EFFICIENCY, AND STANDARDIZATION
+ PERFORMED BY NOUS INFOSYSTEMS.
+
+ PROBLEM NO.:         1
+ Estimation-engine validation -- eculizumab PNH POSTHOC
+0DATA CHECKOUT RUN:              NO
+ DATA SET LOCATED ON UNIT NO.:    2
+ THIS UNIT TO BE REWOUND:        NO
+ CREATE/ADD TO FDATA.csv:        YES
+ NO. OF DATA RECS IN DATA SET:       24
+ NO. OF DATA ITEMS IN DATA SET:  11
+ ID DATA ITEM IS DATA ITEM NO.:   1
+ DEP VARIABLE IS DATA ITEM NO.:   5
+ MDV DATA ITEM IS DATA ITEM NO.:  6
+0INDICES PASSED TO SUBROUTINE PRED:
+   7   2   3   4   0   0   8   0   0   0   0
+0LABELS FOR DATA ITEMS:
+ ID TIME AMT RATE DV MDV EVID CMT CENS WT AGE
+0FORMAT FOR DATA:
+ (E2.0,E10.0,E4.0,E13.0,E9.0,4E2.0,E3.0,E2.0)
+
+ TOT. NO. OF OBS RECS:       12
+ TOT. NO. OF INDIVIDUALS:        3
+0LENGTH OF THETA:   8
+0DEFAULT THETA BOUNDARY TEST OMITTED:    NO
+0OMEGA HAS SIMPLE DIAGONAL FORM WITH DIMENSION:   2
+0DEFAULT OMEGA BOUNDARY TEST OMITTED:    NO
+0INITIAL ESTIMATE OF THETA:
+ LOWER BOUND    INITIAL EST    UPPER BOUND
+  0.2500E+00     0.2500E+00     0.2500E+00
+  0.4299E+01     0.4299E+01     0.4299E+01
+  0.2564E+02     0.2564E+02     0.2564E+02
+  0.1354E+02     0.1354E+02     0.1354E+02
+  0.2630E+01     0.2630E+01     0.2630E+01
+  0.6243E+00     0.6243E+00     0.6243E+00
+  0.1910E+02     0.1910E+02     0.1910E+02
+  0.1850E-01     0.1850E-01     0.1850E-01
+0INITIAL ESTIMATE OF OMEGA:
+ 0.1546E+00
+ 0.0000E+00   0.8120E-01
+0OMEGA CONSTRAINED TO BE THIS INITIAL ESTIMATE
+1DOUBLE PRECISION PREDPP VERSION 7.6.0 (nm760)
+
+ GENERAL NONLINEAR KINETICS MODEL WITH STIFF/NONSTIFF EQUATIONS (LSODA, ADVAN13)
+0MODEL SUBROUTINE USER-SUPPLIED - ID NO. 9999
+0MAXIMUM NO. OF BASIC PK PARAMETERS:   6
+0COMPARTMENT ATTRIBUTES
+ COMPT. NO.   FUNCTION                         INITIAL    ON/OFF      DOSE      DEFAULT    DEFAULT
+                                               STATUS     ALLOWED    ALLOWED    FOR DOSE   FOR OBS.
+    1         CENTRAL                            ON         YES        YES        YES        YES
+    2         PERIPHERAL                         ON         YES        YES        NO         NO
+    3         OUTPUT                             OFF        YES        NO         NO         NO
+ INITIAL (BASE) TOLERANCE SETTINGS:
+ NRD (RELATIVE) VALUE(S) OF TOLERANCE:   9
+ ANRD (ABSOLUTE) VALUE(S) OF TOLERANCE:  12
+1
+ ADDITIONAL PK PARAMETERS - ASSIGNMENT OF ROWS IN GG
+ COMPT. NO.                             INDICES
+              SCALE      BIOAVAIL.   ZERO-ORDER  ZERO-ORDER  ABSORB
+                         FRACTION    RATE        DURATION    LAG
+    1            7           *           *           *           *
+    2            *           *           *           *           *
+    3            *           -           -           -           -
+             - PARAMETER IS NOT ALLOWED FOR THIS MODEL
+             * PARAMETER IS NOT SUPPLIED BY PK SUBROUTINE;
+               WILL DEFAULT TO ONE IF APPLICABLE
+0DATA ITEM INDICES USED BY PRED ARE:
+   EVENT ID DATA ITEM IS DATA ITEM NO.:      7
+   TIME DATA ITEM IS DATA ITEM NO.:          2
+   DOSE AMOUNT DATA ITEM IS DATA ITEM NO.:   3
+   DOSE RATE DATA ITEM IS DATA ITEM NO.:     4
+   COMPT. NO. DATA ITEM IS DATA ITEM NO.:    8
+
+0PK SUBROUTINE CALLED WITH EVERY EVENT RECORD.
+ PK SUBROUTINE NOT CALLED AT NONEVENT (ADDITIONAL OR LAGGED) DOSE TIMES.
+0ERROR SUBROUTINE CALLED WITH EVERY EVENT RECORD.
+0DES SUBROUTINE USES COMPACT STORAGE MODE.
+1
+
+
+ #TBLN:      1
+ #METH: Laplacian Conditional Estimation (Evaluation)
+
+ ESTIMATION STEP OMITTED:                 YES
+ SHRINK INFO WITH EVALUATION (EVALSHRINK) NO
+ ANALYSIS TYPE:                           POPULATION
+ CONDITIONAL ESTIMATES USED:              YES
+ CENTERED ETA:                            NO
+ EPS-ETA INTERACTION:                     NO
+ LAPLACIAN OBJ. FUNC.:                    YES
+ NUMERICAL 2ND DERIVATIVES:               NO
+ PRED F SET TO A LIKELIHOOD:              YES
+ NUMERICAL DERIVATIVE
+       FILE REQUEST (NUMDER):               NONE
+ MAP (ETAHAT) ESTIMATION METHOD (OPTMAP):   0
+ ETA HESSIAN EVALUATION METHOD (ETADER):    0
+ INITIAL ETA FOR MAP ESTIMATION (MCETA):    0
+ SIGDIGITS FOR MAP ESTIMATION (SIGLO):      100
+ GRADIENT SIGDIGITS OF
+       FIXED EFFECTS PARAMETERS (SIGL):     100
+ NOPRIOR SETTING (NOPRIOR):                 0
+ NOCOV SETTING (NOCOV):                     OFF
+ DERCONT SETTING (DERCONT):                 OFF
+ FINAL ETA RE-EVALUATION (FNLETA):          1
+ EXCLUDE NON-INFLUENTIAL (NON-INFL.) ETAS
+       IN SHRINKAGE (ETASTYPE):             NO
+ NON-INFL. ETA CORRECTION (NONINFETA):      0
+ RAW OUTPUT FILE (FILE): psn.ext
+ EXCLUDE TITLE (NOTITLE):                   NO
+ EXCLUDE COLUMN LABELS (NOLABEL):           NO
+ FORMAT FOR ADDITIONAL FILES (FORMAT):      S1PE12.5
+ PARAMETER ORDER FOR OUTPUTS (ORDER):       TSOL
+ KNUTHSUMOFF:                               0
+ INCLUDE LNTWOPI:                           NO
+ INCLUDE CONSTANT TERM TO PRIOR (PRIORC):   NO
+ INCLUDE CONSTANT TERM TO OMEGA (ETA) (OLNTWOPI):NO
+ ADDITIONAL CONVERGENCE TEST (CTYPE=4)?:    NO
+ EM OR BAYESIAN METHOD USED:                 NONE
+
+ TOLERANCES FOR ESTIMATION/EVALUATION STEP:
+ NRD (RELATIVE) VALUE(S) OF TOLERANCE:   9
+ ANRD (ABSOLUTE) VALUE(S) OF TOLERANCE:  12
+ TOLERANCES FOR COVARIANCE STEP:
+ NRD (RELATIVE) VALUE(S) OF TOLERANCE:   9
+ ANRD (ABSOLUTE) VALUE(S) OF TOLERANCE:  12
+
+ THE FOLLOWING LABELS ARE EQUIVALENT
+ PRED=NPRED
+ RES=NRES
+ WRES=NWRES
+ IWRS=NIWRES
+ IPRD=NIPRED
+ IRS=NIRES
+
+ Elapsed evaluation time in seconds:     0.02
+ Elapsed postprocess time in seconds:     0.00
+1
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ ************************************************************************************************************************
+ ********************                                                                                ********************
+ ********************                  LAPLACIAN CONDITIONAL ESTIMATION (EVALUATION)                 ********************
+ #OBJT:**************                       MINIMUM VALUE OF OBJECTIVE FUNCTION                      ********************
+ ********************                                                                                ********************
+ ************************************************************************************************************************
+ 
+
+
+
+
+
+ #OBJV:********************************************           145.381       *********************************************
+1
+ ************************************************************************************************************************
+ ********************                                                                                ********************
+ ********************                  LAPLACIAN CONDITIONAL ESTIMATION (EVALUATION)                 ********************
+ ********************                             FINAL PARAMETER ESTIMATE                           ********************
+ ********************                                                                                ********************
+ ************************************************************************************************************************
+ 
+
+
+ THETA - VECTOR OF FIXED EFFECTS PARAMETERS   *********
+
+
+         TH 1      TH 2      TH 3      TH 4      TH 5      TH 6      TH 7      TH 8     
+ 
+         2.50E-01  4.30E+00  2.56E+01  1.35E+01  2.63E+00  6.24E-01  1.91E+01  1.85E-02
+ 
+
+
+ OMEGA - COV MATRIX FOR RANDOM EFFECTS - ETAS  ********
+
+
+         ETA1      ETA2     
+ 
+ ETA1
++        1.55E-01
+ 
+ ETA2
++        0.00E+00  8.12E-02
+ 
+1
+
+
+ OMEGA - CORR MATRIX FOR RANDOM EFFECTS - ETAS  *******
+
+
+         ETA1      ETA2     
+ 
+ ETA1
++        3.93E-01
+ 
+ ETA2
++        0.00E+00  2.85E-01
+ 
+ Elapsed finaloutput time in seconds:     0.00
+ #CPUT: Total CPU Time in Seconds,        0.037
+Stop Time:
+Mon Sep 14 16:25:16 CEST 2026

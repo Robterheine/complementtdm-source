@@ -1,0 +1,12 @@
+.DS_Store
+.Rhistory
+node_modules/
+.claude/
+.freebuff/
+~$*
+# NONMEM/PsN compiler scratch; the result files (psn.phi, psn.ext, psn.lst) are kept
+validation/nonmem/run_*/NM_run1/temp_dir/
+validation/nonmem/run_*/NM_run1/FORIG
+validation/nonmem/run_*/NM_run1/FREPL
+validation/nonmem/run_*/NM_run1/INTER
+validation/nonmem/run_*/NM_run1/FDATA.csv

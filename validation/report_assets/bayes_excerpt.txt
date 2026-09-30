@@ -1,0 +1,186 @@
+  function logPhi(z) {
+    if (z > 6) return 0;
+    if (z < -6) return -0.5 * z * z - Math.log(-z) - 0.9189385332046727;
+    return Math.log(0.5 * erfc(-z / Math.SQRT2));
+  }
+
+  function omegaQuadVec(om, eta) {
+    var vars = om.vars || [om.cl, om.v1];
+    var n = eta.length;
+    var c = om.cov || 0;
+    // 2D block with covariance (ravulizumab) — exact inverse
+    if (n === 2 && Math.abs(c) > 1e-12) {
+      var a = vars[0], b = vars[1];
+      var det = a * b - c * c;
+      if (!(det > 0)) return eta[0] * eta[0] / Math.max(a, 1e-9) + eta[1] * eta[1] / Math.max(b, 1e-9);
+      return (b * eta[0] * eta[0] - 2 * c * eta[0] * eta[1] + a * eta[1] * eta[1]) / det;
+    }
+    // diagonal (and 2D cov==0 falls through here)
+    var s = 0;
+    for (var i = 0; i < n; i++) {
+      var v = vars[i] != null ? vars[i] : 1;
+      if (!(v > 0)) v = 1e-9;
+      s += eta[i] * eta[i] / v;
+    }
+    // add off-diag correction for the first block when n>2 and cov present
+    if (n > 2 && Math.abs(c) > 1e-12) {
+      var a2 = vars[0], b2 = vars[1];
+      var det2 = a2 * b2 - c * c;
+      if (det2 > 0) {
+        var diag = eta[0] * eta[0] / a2 + eta[1] * eta[1] / b2;
+        var block = (b2 * eta[0] * eta[0] - 2 * c * eta[0] * eta[1] + a2 * eta[1] * eta[1]) / det2;
+        s = s - diag + block;
+      }
+    }
+    return s;
+  }
+  function omegaQuad(om, e0, e1) {
+    if (Array.isArray(e0)) return omegaQuadVec(om, e0);
+    if (e1 === undefined) return omegaQuadVec(om, [e0]);
+    var a = om.cl, b = om.v1, c = om.cov || 0;
+    var det = a * b - c * c;
+    if (!(det > 0)) return e0 * e0 / Math.max(a, 1e-9) + e1 * e1 / Math.max(b, 1e-9);
+    return (b * e0 * e0 - 2 * c * e0 * e1 + a * e1 * e1) / det;
+  }
+
+  function makeOfv(ctx) {
+    var obs = ctx.obs.slice().sort(function (a, b) { return a.t - b.t; });
+    var times = obs.map(function (o) { return o.t; });
+    var sig = (ctx.drug ? M.spec(ctx.drug) : M.drug()).SIGMA;
+    var rtol = ctx.rtol != null ? ctx.rtol : 1e-6;
+    var lloq = ctx.lloq || 0;
+    var errMult = ctx.errMult != null && ctx.errMult > 0 ? ctx.errMult : 1;
+    var dims = (ctx.omega && ctx.omega.dims) || 2;
+    /* Per-observation residual-SD multiplier, precomputed: it depends only on
+     * each sample's AGE, never on eta, so it is constant across the whole
+     * search. Age is measured from the newest fitted sample (obs is sorted
+     * above), not from the wall clock: a session must refit to the same
+     * numbers tomorrow, and a report must be reproducible from its own JSON
+     * export. Folds errMult in, since the two do the same thing. */
+    var tNewest = times.length ? times[times.length - 1] : 0;
+    var multI = obs.map(function (o) {
+      return errMult * recencyMult(ctx.recency, tNewest - o.t);
+    });
+    function ofv(eta) {
+      var etaVec = eta;
+      var p = M.indivParams(ctx.wt, ctx.disease, etaVec, ctx.drug, ctx.age);
+      var sim = M.simulate(ctx.doses, times, p, { rtol: rtol, id: ctx.drug });
+      if (sim.failed) return Infinity;
+      var s = omegaQuadVec(ctx.omega, etaVec);
+      for (var i = 0; i < obs.length; i++) {
+        var o = obs[i], pred = sim.c[i];
+        // variance floor guards the MAP against a degenerate sd -> 0 when pred ~ 0
+        var v = Math.max(sig.ADD + sig.PROP * pred * pred, 1e-6) * multI[i] * multI[i];
+        var sd = Math.sqrt(v);
+        if (o.lloq && lloq > 0) {
+          var lp = logPhi((lloq - pred) / sd);
+          if (!isFinite(lp)) return Infinity;
+          s -= 2 * lp;
+        } else {
+          var d = (o.c - pred) / sd;
+          s += d * d + Math.log(v);
+        }
+      }
+      return s;
+    };
+    return ofv;
+  }
+
+  function nelderMead(f, x0, step, maxIter) {
+    var n = x0.length;
+    var pts = [{ x: x0.slice(), f: f(x0) }];
+    if (!isFinite(pts[0].f)) return { x: x0.slice(), f: pts[0].f, ok: false };
+    var i, j;
+    for (i = 0; i < n; i++) {
+      var xs = x0.slice(); xs[i] += step[i];
+      pts.push({ x: xs, f: f(xs) });
+    }
+    var iter = 0;
+    for (; iter < maxIter; iter++) {
+      pts.sort(function (a, b) { return a.f - b.f; });
+      var spread = Math.abs(pts[n].f - pts[0].f);
+      var xspread = 0;
+      for (i = 1; i <= n; i++) {
+        for (j = 0; j < n; j++) xspread = Math.max(xspread, Math.abs(pts[i].x[j] - pts[0].x[j]));
+      }
+      if (spread < 1e-10 && xspread < 1e-7) break;
+      var cen = new Array(n).fill(0);
+      for (i = 0; i < n; i++) for (j = 0; j < n; j++) cen[j] += pts[i].x[j] / n;
+      var worst = pts[n];
+      var xr = cen.map(function (c, jj) { return c + (c - worst.x[jj]); });
+      var fr = f(xr);
+      var nw;
+      if (isFinite(fr) && fr < pts[0].f) {
+        var xe = cen.map(function (c, jj) { return c + 2 * (c - worst.x[jj]); });
+        var fe = f(xe);
+        nw = (isFinite(fe) && fe < fr) ? { x: xe, f: fe } : { x: xr, f: fr };
+      } else if (isFinite(fr) && fr < pts[n - 1].f) {
+        nw = { x: xr, f: fr };
+      } else {
+        var xc = cen.map(function (c, jj) { return c + 0.5 * (worst.x[jj] - c); });
+        var fc = f(xc);
+        if (isFinite(fc) && fc < worst.f) {
+          nw = { x: xc, f: fc };
+        } else {
+          for (i = 1; i <= n; i++) {
+            var xs2 = pts[0].x.map(function (c, jj) { return (c + pts[i].x[jj]) / 2; });
+            pts[i] = { x: xs2, f: f(xs2) };
+          }
+          continue;
+        }
+      }
+      pts[n] = nw;
+    }
+    pts.sort(function (a, b) { return a.f - b.f; });
+    // `converged` distinguishes a simplex that contracted to the tolerance from
+    // one that merely ran out of iterations. Nelder-Mead can stall on a
+    // non-stationary point in >2 dimensions, and the resulting x is reported to
+    // the user as the individual PK estimate — so a stall must not look like a
+    // success (v0.13.0).
+    return { x: pts[0].x, f: pts[0].f, iters: iter, ok: true, converged: iter < maxIter };
+  }
+
+  function mapEstimate(ofv, step, opts) {
+    // Generic over eta dimension: step length determines dims (default 2D for backward compat).
+    // When step length >2, the refinement steps are repeated with scaled small steps.
+    var n = Array.isArray(step) ? step.length : 2;
+    step = step || [0.4, 0.4];
+    if (step.length !== n) n = step.length;
+    opts = opts || {};
+
+    function runFrom(x0) {
+      var r = nelderMead(ofv, x0, step, n <= 2 ? 300 : 500);
+      if (!r.ok) return r;
+      // refinement stages — scale steps per dimension (smaller variance dims get smaller steps)
+      var small = step.map(function (s) { return s * 0.2; });
+      var tiny  = step.map(function (s) { return s * 0.05; });
+      // ensure minimum step sizes for very small variances
+      for (var kk = 0; kk < n; kk++) { if (small[kk] < 0.02) small[kk] = 0.02; if (tiny[kk] < 0.005) tiny[kk] = 0.005; }
+      var r2 = nelderMead(ofv, r.x, small, n <= 2 ? 200 : 350);
+      if (r2.ok && r2.f < r.f) r = r2;
+      var r3 = nelderMead(ofv, r.x, tiny, n <= 2 ? 150 : 250);
+      if (r3.ok && r3.f < r.f) r = r3;
+      return r;
+    }
+
+    var zero = new Array(n); for (var k = 0; k < n; k++) zero[k] = 0;
+    var best = runFrom(zero);
+    if (!best.ok) return best;
+
+    /* v0.13.0: refit from a dispersed start and keep the better OFV. A single
+     * start at eta = 0 can stall on a ridge (SC-only crovalimab, where CL and F
+     * trade off). `startGap` is the OFV disagreement between starts — the UI
+     * warns when it is large, instead of silently returning the worse mode. */
+    var starts = opts.starts != null ? opts.starts : 1;
+    var gap = 0;
+    for (var s = 0; s < starts; s++) {
+      var sign = (s % 2 === 0) ? 1 : -1;
+      var alt = runFrom(step.map(function (st) { return sign * 0.5 * st; }));
+      if (alt.ok && isFinite(alt.f)) {
+        gap = Math.max(gap, Math.abs(alt.f - best.f));
+        if (alt.f < best.f - 1e-9) best = alt;
+      }
+    }
+    best.startGap = gap;
+    return best;
+  }
